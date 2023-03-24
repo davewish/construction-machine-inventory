@@ -1,4 +1,4 @@
-class MachineCategory {
+export class MachineCategory {
   categoryId: string;
   categoryName: string;
 
