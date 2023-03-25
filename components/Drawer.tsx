@@ -9,14 +9,10 @@ const Drawer1 = ({ navigation }) => {
       {drawerItem.map((item) => (
         <Pressable
           key={item.id}
-          style={[
-            styles.item,
-            // category.id === selectedCategory?.id && styles.selectedItem,
-          ]}
+          style={[styles.item]}
           onPress={() => navigation.navigate(item.drawerName)}
         >
           <Text style={styles.name}>{item.drawerName}</Text>
-          {/* <Image style={styles.image} source={{ uri: category.image }} /> */}
         </Pressable>
       ))}
     </View>
