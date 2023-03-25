@@ -6,34 +6,31 @@ import { StyleSheet, Text, View } from "react-native";
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { Provider as PaperProvider } from "react-native-paper";
 
 import { store } from "./store/redux/store";
 import CategoryScreen from "./screens/CategoryScreen";
+import ManagedCategory from "./screens/ManagedCategory";
+import { useCategories } from "./store/redux/hooks";
+import Drawer1 from "./components/Drawer";
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <Drawer.Navigator
-          screenOptions={{
-            headerTitleStyle: {
-              fontWeight: "bold",
-              textAlign: "left",
-              flexGrow: 1,
-            },
-          }}
-        >
-          <Drawer.Screen
-            name="category"
-            component={CategoryScreen}
-            options={{
-              title: "Dashboard",
-            }}
-          />
-        </Drawer.Navigator>
-      </NavigationContainer>
+      <PaperProvider>
+        <NavigationContainer>
+          <Drawer.Navigator
+            initialRouteName="category"
+            drawerContent={(props) => <Drawer1 {...props} />}
+          >
+            <Drawer.Screen name="category" component={CategoryScreen} />
+
+            <Drawer.Screen name="managedCategory" component={ManagedCategory} />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
     </Provider>
   );
 }
