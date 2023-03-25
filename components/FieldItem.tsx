@@ -121,7 +121,8 @@ const styles = StyleSheet.create({
     height: "100%",
     textAlign: "center",
     paddingTop: 20,
-    fontSize: 14,
+    paddingHorizontal: 4,
+    fontSize: 12,
     fontWeight: "bold",
   },
 });

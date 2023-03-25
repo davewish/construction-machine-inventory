@@ -14,6 +14,8 @@ import AddCategoryForm from "./AddCategoryForm";
 import { COLORS } from "../utils/colors";
 import { useCategories } from "../store/redux/hooks";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const ManagedCategory = () => {
   const { categories } = useCategories();
 

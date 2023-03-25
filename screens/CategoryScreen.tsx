@@ -1,14 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { useSelector } from "react-redux";
-import CustomButton from "../components/Button";
-import Button from "../components/Button";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+
+import { Button } from "react-native-paper";
 import MachineForm from "../components/MachineForm";
 import NotFound from "../components/NoFound";
-import { MachineCategory } from "../models/Category";
+
 import { useCategories } from "../store/redux/hooks";
-import { RootState } from "../store/redux/store";
+
+import { COLORS } from "../utils/colors";
 
 interface CategoryScreenProps {
   navigation: any;
@@ -21,9 +20,8 @@ const CategoryScreen = ({ navigation }: CategoryScreenProps) => {
     navigation.navigate("managedCategory");
   };
 
-  const renderItem = (itemData) => {
-    console.log("ite", itemData);
-    return <MachineForm category={itemData.item} />;
+  const renderItem = ({ item }) => {
+    return <MachineForm category={item} />;
   };
 
   if (categories.length === 0) {
@@ -31,10 +29,14 @@ const CategoryScreen = ({ navigation }: CategoryScreenProps) => {
       <View style={styles.rootScreen}>
         <NotFound />
 
-        <CustomButton
-          addNewCategoryForm={addNewCategoryHandler}
-          label={"Add New Category"}
-        />
+        <Button
+          buttonColor={COLORS.primary}
+          style={styles.btn}
+          mode="contained"
+          onPress={addNewCategoryHandler}
+        >
+          Add new
+        </Button>
       </View>
     );
   }
@@ -58,5 +60,10 @@ const styles = StyleSheet.create({
   rootScreen: {
     flex: 1,
     paddingHorizontal: 20,
+    justifyContent: "space-between",
+  },
+
+  btn: {
+    borderRadius: 8,
   },
 });

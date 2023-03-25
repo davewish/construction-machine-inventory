@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MachineCategory } from "../../models/Category";
 import uuid from "uuid-random";
 
+
 interface IntialState {
   categories: MachineCategory[];
   drawerItem: any;
-  selectedCategory: string;
 }
 const initialState: IntialState = {
   categories: [],
@@ -13,7 +13,6 @@ const initialState: IntialState = {
     { drawerName: "category", id: uuid() },
     { drawerName: "managedCategory", id: uuid() },
   ],
-  selectedCategory: {},
 };
 
 const categorySlice = createSlice({
