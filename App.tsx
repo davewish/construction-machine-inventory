@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 
 import "react-native-gesture-handler";
@@ -8,32 +8,40 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Provider as PaperProvider } from "react-native-paper";
 
-import { store } from "./store/redux/store";
+import { store, persistor } from "./store/redux/store";
 import CategoryScreen from "./screens/CategoryScreen";
 import ManagedCategory from "./screens/ManagedCategory";
-import { useCategories } from "./store/redux/hooks";
-import Drawer1 from "./components/Drawer";
+
+import { PersistGate } from "redux-persist/integration/react";
+
+import CustomeDrawer from "./components/Drawer";
 
 const Drawer = createDrawerNavigator();
 
-export default function App() {
+const App = () => {
   return (
     <Provider store={store}>
-      <PaperProvider>
-        <NavigationContainer>
-          <Drawer.Navigator
-            initialRouteName="category"
-            drawerContent={(props) => <Drawer1 {...props} />}
-          >
-            <Drawer.Screen name="category" component={CategoryScreen} />
+      <PersistGate loading={null} persistor={persistor}>
+        <PaperProvider>
+          <NavigationContainer>
+            <Drawer.Navigator
+              initialRouteName="category"
+              drawerContent={(props) => <CustomeDrawer {...props} />}
+            >
+              <Drawer.Screen name="category" component={CategoryScreen} />
 
-            <Drawer.Screen name="managedCategory" component={ManagedCategory} />
-          </Drawer.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
+              <Drawer.Screen
+                name="managedCategory"
+                component={ManagedCategory}
+              />
+            </Drawer.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </PersistGate>
     </Provider>
   );
-}
+};
+export default App;
 
 const styles = StyleSheet.create({
   container: {

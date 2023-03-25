@@ -19,6 +19,9 @@ const categorySlice = createSlice({
   name: "categories",
   initialState,
   reducers: {
+    setStateFromAsyncStorage: (state, action) => {
+      state = action.payload;
+    },
     addCategory: (state, action: PayloadAction<MachineCategory>) => {
       state.categories.push(action.payload);
     },
@@ -58,6 +61,7 @@ export const {
   removeCategory,
   addDrawerItem,
   updateDrawerItem,
+  setStateFromAsyncStorage,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

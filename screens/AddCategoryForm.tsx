@@ -43,7 +43,7 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
 
     dispatch(updateCategory(category));
 
-    dispatch(updateDrawerItem({ drawerName: category.categoryName, oldName }));
+    // dispatch(updateDrawerItem({ drawerName: category.categoryName, oldName }));
   };
   const categoryRemoveHandler = () => {
     dispatch(removeCategory(category));

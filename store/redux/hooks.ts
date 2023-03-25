@@ -3,10 +3,10 @@ import { RootState } from "./store";
 
 export const useCategories = () => {
   const machineCategories = useSelector(
-    (state: RootState) => state.MachineCategory.categories
+    (state: RootState) => state.persistRed.categories
   );
   const drawerItem = useSelector(
-    (state: RootState) => state.MachineCategory.drawerItem
+    (state: RootState) => state.persistRed.drawerItem
   );
   return {
     categories: machineCategories,

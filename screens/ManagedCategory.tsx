@@ -1,5 +1,11 @@
 import React from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useSelector } from "react-redux";
 import { Button } from "react-native-paper";
 
@@ -13,8 +19,6 @@ import { addCategory, addDrawerItem } from "../store/redux/categoryReducer";
 import AddCategoryForm from "./AddCategoryForm";
 import { COLORS } from "../utils/colors";
 import { useCategories } from "../store/redux/hooks";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ManagedCategory = () => {
   const { categories } = useCategories();
@@ -50,19 +54,24 @@ const ManagedCategory = () => {
     );
 
   return (
-    <View style={styles.rootScreen}>
-      <View style={styles.flatListContainer}>{displayContent}</View>
-      <View style={styles.addBtnContainer}>
-        <Button
-          buttonColor={COLORS.primary}
-          style={styles.btn}
-          mode="contained"
-          onPress={addNewCategoryForm}
-        >
-          Add new
-        </Button>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={styles.rootScreen}>
+        <View style={styles.flatListContainer}>{displayContent}</View>
+        <View style={styles.addBtnContainer}>
+          <Button
+            buttonColor={COLORS.primary}
+            style={styles.btn}
+            mode="contained"
+            onPress={addNewCategoryForm}
+          >
+            Add new
+          </Button>
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -70,7 +79,6 @@ export default ManagedCategory;
 const styles = StyleSheet.create({
   rootScreen: {
     flex: 1,
-    margin: 10,
   },
   flatListContainer: {
     flex: 2,

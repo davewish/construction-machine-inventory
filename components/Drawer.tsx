@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useCategories } from "../store/redux/hooks";
 
-const Drawer1 = ({ navigation }) => {
+const CustomeDrawer = ({ navigation }) => {
   const { drawerItem } = useCategories();
   return (
     <View style={styles.container}>
@@ -48,4 +48,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Drawer1;
+export default CustomeDrawer;

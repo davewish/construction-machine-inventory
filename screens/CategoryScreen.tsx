@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 
 import { Button } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import MachineForm from "../components/MachineForm";
 import NotFound from "../components/NoFound";
+import { setStateFromAsyncStorage } from "../store/redux/categoryReducer";
 
 import { useCategories } from "../store/redux/hooks";
+import useSaveToAsyncStorage, {
+  loadStateFromAsyncStorage,
+} from "../store/redux/save";
 
 import { COLORS } from "../utils/colors";
 
@@ -15,6 +21,22 @@ interface CategoryScreenProps {
 
 const CategoryScreen = ({ navigation }: CategoryScreenProps) => {
   const { categories } = useCategories();
+
+  const dispatch = useDispatch();
+  const loadData = async () => {
+    const data = await loadStateFromAsyncStorage();
+    console.log("categor persit", data);
+
+    if (data) {
+      dispatch(setStateFromAsyncStorage(data));
+    }
+  };
+  useEffect(() => {
+    // loadData();
+  }, []);
+  useEffect(() => {
+    console.log(categories);
+  }, []);
 
   const addNewCategoryHandler = () => {
     navigation.navigate("managedCategory");
