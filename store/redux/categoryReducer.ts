@@ -1,18 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MachineCategory } from "../../models/Category";
 import uuid from "uuid-random";
-
+import { Machine } from "../../models/Machine";
 
 interface IntialState {
   categories: MachineCategory[];
-  drawerItem: any;
+  machines: Machine[];
 }
 const initialState: IntialState = {
   categories: [],
-  drawerItem: [
-    { drawerName: "category", id: uuid() },
-    { drawerName: "managedCategory", id: uuid() },
-  ],
+
+  machines: [],
 };
 
 const categorySlice = createSlice({
@@ -41,6 +39,17 @@ const categorySlice = createSlice({
 
       state.categories.splice(indexToBeRemoved, 1);
     },
+    addMachine: (state, action: PayloadAction<Machine>) => {
+      state.machines.push(action.payload);
+    },
+    removeMchine: (state, action: PayloadAction<Machine>) => {
+      const { machines } = state;
+      const indexToBeRemoved = machines.findIndex(
+        (machine) => machine.machineId == action.payload.machineId
+      );
+
+      state.machines.splice(indexToBeRemoved, 1);
+    },
   },
 });
 
@@ -50,6 +59,8 @@ export const {
   removeCategory,
 
   setStateFromAsyncStorage,
+  addMachine,
+  removeMchine,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

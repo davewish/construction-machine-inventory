@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useCategories } from "../store/redux/hooks";
 
-const CustomeDrawer = ({ navigation }) => {
+const CustomeDrawer = ({ navigation }: { navigation: any }) => {
   const { categoryNames } = useCategories();
   return (
     <View style={styles.container}>
@@ -10,7 +10,18 @@ const CustomeDrawer = ({ navigation }) => {
         <Pressable
           key={item.id}
           style={[styles.item]}
-          onPress={() => navigation.navigate(item.name)}
+          onPress={() => {
+            if (
+              item.name === categoryNames[0].name ||
+              item.name === categoryNames[categoryNames.length - 1].name
+            ) {
+              navigation.navigate(item.name);
+            } else {
+              navigation.navigate("MachineTypeDetail", {
+                categoryName: item.name,
+              });
+            }
+          }}
         >
           <Text style={styles.name}>{item.name}</Text>
         </Pressable>

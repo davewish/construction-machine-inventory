@@ -15,6 +15,8 @@ import ManagedCategory from "./screens/ManagedCategory";
 import { PersistGate } from "redux-persist/integration/react";
 
 import CustomeDrawer from "./components/Drawer";
+import MachineTypeDetails from "./screens/MachineTypeDetail";
+import MachineTypeDetail from "./screens/MachineTypeDetail";
 
 const Drawer = createDrawerNavigator();
 
@@ -25,14 +27,18 @@ const App = () => {
         <PaperProvider>
           <NavigationContainer>
             <Drawer.Navigator
-              initialRouteName="category"
+              initialRouteName="Category"
               drawerContent={(props) => <CustomeDrawer {...props} />}
             >
-              <Drawer.Screen name="category" component={CategoryScreen} />
+              <Drawer.Screen name="Category" component={CategoryScreen} />
 
               <Drawer.Screen
-                name="managedCategory"
+                name="ManagedCategory"
                 component={ManagedCategory}
+              />
+              <Drawer.Screen
+                name="MachineTypeDetail"
+                component={MachineTypeDetail}
               />
             </Drawer.Navigator>
           </NavigationContainer>

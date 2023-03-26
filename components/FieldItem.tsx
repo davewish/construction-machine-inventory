@@ -17,7 +17,7 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
 
   const dispatch = useDispatch();
 
-  const textInputHandler = (text) => {
+  const textInputHandler = (text: string) => {
     const category = categories.find(
       (category) => category.categoryId === categoryId
     );
@@ -49,24 +49,6 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
   };
 
   const { fieldName, fieldType } = field;
-  const renderInputType = () => {
-    switch (fieldType) {
-      case "Number":
-        return (
-          <TextInput
-            keyboardType="numeric"
-            value={fieldName}
-            onChangeText={textInputHandler}
-          />
-        );
-      case "Text":
-        return <TextInput value={fieldName} onChangeText={textInputHandler} />;
-      case "Checkbox":
-        return <Checkbox status={"checked"} />;
-      case "Date":
-        return <Text>assf</Text>; //<DatePicker value={new Date()} mode="date" />;
-    }
-  };
 
   return (
     <View style={styles.fieldContainer}>

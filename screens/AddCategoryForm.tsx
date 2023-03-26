@@ -9,13 +9,9 @@ import { FIELD_TYPES } from "../utils/fieldType";
 import MenuItem from "../components/MenuItem";
 import { useDispatch } from "react-redux";
 import uuid from "uuid-random";
-import {
-  removeCategory,
-  updateCategory,
-  updateDrawerItem,
-} from "../store/redux/categoryReducer";
+import { removeCategory, updateCategory } from "../store/redux/categoryReducer";
 import FieldItem from "../components/FieldItem";
-import { useCategories } from "../store/redux/hooks";
+
 import { isPortrait } from "../utils/utils";
 
 interface AddCategoryFormProps {

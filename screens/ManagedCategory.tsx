@@ -20,13 +20,32 @@ import AddCategoryForm from "./AddCategoryForm";
 import { COLORS } from "../utils/colors";
 import { useCategories } from "../store/redux/hooks";
 import { isPortrait } from "../utils/utils";
+import { InventoryParamList } from "../utils/type";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { RouteProp } from "@react-navigation/native";
 
-const ManagedCategory = () => {
+type ManagedCategoryRouteProp = RouteProp<
+  InventoryParamList,
+  "ManagedCategory"
+>;
+
+type ManagedCategoryDrawerNavigationProp = DrawerNavigationProp<
+  InventoryParamList,
+  "ManagedCategory"
+>;
+
+type ManagedCategoryprops = {
+  route?: ManagedCategoryRouteProp;
+  navigation?: ManagedCategoryDrawerNavigationProp;
+};
+
+const ManagedCategory: React.FC<ManagedCategoryprops> = ({
+  navigation,
+  route,
+}) => {
   const { categories } = useCategories();
 
   const dispatch = useDispatch();
-
-  console.log("orienation ", isPortrait());
 
   const addNewCategoryForm = () => {
     const category = new MachineCategory(uuid(), "New Category");
@@ -50,6 +69,7 @@ const ManagedCategory = () => {
     ) : (
       <FlatList
         data={categories}
+        contentContainerStyle={{ padding: 4 }}
         renderItem={renderCategoryForm}
         numColumns={isPortrait() ? 1 : 2}
         keyExtractor={(item) => item.categoryId}

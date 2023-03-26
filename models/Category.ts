@@ -2,7 +2,6 @@ export interface Field {
   fieldId: string;
   fieldName: string;
   fieldType: string;
-  fieldValue?: string;
 }
 
 export class MachineCategory {

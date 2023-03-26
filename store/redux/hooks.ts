@@ -10,13 +10,19 @@ export const useCategories = () => {
   const categoryNames = machineCategories.map((category) => {
     return { id: category.categoryId, name: category.categoryName };
   });
+  const machines = useSelector((state: RootState) => state.persistRed.machines);
+  const selectedMachines = (categoryName: string) => {
+    return machines.filter((machine) => machine.categoryName === categoryName);
+  };
 
   return {
     categories: machineCategories,
     categoryNames: [
-      { id: uuid(), name: "category" },
+      { id: uuid(), name: "Category" },
       ...categoryNames,
-      { id: uuid(), name: "managedCategory" },
+      { id: uuid(), name: "ManagedCategory" },
     ],
+    selectedMachines,
+    machines,
   };
 };

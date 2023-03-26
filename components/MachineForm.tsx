@@ -1,15 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Checkbox, TextInput, Text } from "react-native-paper";
 import { Field, MachineCategory } from "../models/Category";
-import DateTimerPicker from "@react-native-community/datetimepicker";
+import { Button } from "react-native-paper";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
+import { DatePickerIOS } from "react-native";
+import { COLORS } from "../utils/colors";
+import { Machine, MachineField } from "../models/Machine";
+import { useDispatch } from "react-redux";
+import { removeMchine } from "../store/redux/categoryReducer";
 
 interface MachineFormProps {
-  category: MachineCategory;
+  machine: Machine;
 }
-const MachineForm = ({ category }: MachineFormProps) => {
-  console.log("category ", category);
-  const renderInputType = (field: Field) => {
+const MachineForm = ({ machine }: MachineFormProps) => {
+  const onChange = (event, selectedDate) => {
+    //setDate(currentDate);
+  };
+
+  const dispatch = useDispatch();
+
+  const showMode = () => {
+    DateTimePickerAndroid.open({
+      value: new Date(),
+      onChange,
+      mode: "date",
+      is24Hour: true,
+    });
+  };
+
+  const changeInputHandler = (value: string) => {};
+  const removeMachineHandler = () => {
+    dispatch(removeMchine(machine));
+  };
+
+  const renderInputType = (field: MachineField): JSX.Element => {
     switch (field.fieldType) {
       case "Number":
         return (
@@ -19,7 +46,7 @@ const MachineForm = ({ category }: MachineFormProps) => {
               mode="outlined"
               style={styles.categoryNameTextBox}
               keyboardType="numeric"
-              value={field.fieldValue}
+              value={field.fieldValue.toString()}
               underlineColor={"transparent"}
               ///onChangeText={textInputHansdler}
             />
@@ -32,7 +59,7 @@ const MachineForm = ({ category }: MachineFormProps) => {
               label={field.fieldName}
               mode="outlined"
               style={styles.categoryNameTextBox}
-              value={field.fieldValue}
+              value={field.fieldValue.toString()}
               underlineColor={"transparent"}
             />
           </View>
@@ -40,21 +67,51 @@ const MachineForm = ({ category }: MachineFormProps) => {
       case "Checkbox":
         return <Checkbox status={"checked"} />;
       case "Date":
-        return <Text>Date</Text>; //<DateTimerPicker value={new Date()} mode="date" />;
+        return (
+          <View style={styles.dateTimeContainer}>
+            <TextInput
+              label={field.fieldName}
+              mode="outlined"
+              style={[styles.categoryNameTextBox, { flex: 1 }]}
+              value={new Date(field.fieldValue).toDateString()}
+              underlineColor={"transparent"}
+              onFocus={showMode}
+            />
+          </View>
+        );
+      default:
+        return <></>;
     }
   };
+  // if (machine && machine.fields.length < 1) {
+  //   return <></>;
+  // }
 
   return (
-    <View style={styles.rootScreen}>
-      {category &&
-        category.categoryFields &&
-        category.categoryFields.map((field) => {
+    <View key={machine.machineId} style={styles.rootScreen}>
+      {machine &&
+        machine.fields &&
+        machine.fields.map((field) => {
           return (
             <View style={styles.innerContainer} key={field.fieldId}>
               {renderInputType(field)}
             </View>
           );
         })}
+      {machine && machine.fields && (
+        <View style={styles.btnContainer}>
+          <Button
+            buttonColor={"red"}
+            textColor="#000"
+            icon={"delete"}
+            style={styles.btn}
+            mode="contained"
+            onPress={removeMachineHandler}
+          >
+            Remove
+          </Button>
+        </View>
+      )}
     </View>
   );
 };
@@ -87,5 +144,19 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     marginBottom: 4,
     marginTop: 6,
+  },
+  dateTimeContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  btn: {
+    borderRadius: 8,
+    padding: 2,
+    marginLeft: 6,
+  },
+  btnContainer: {
+    margin: 10,
+    alignItems: "flex-end",
   },
 });
