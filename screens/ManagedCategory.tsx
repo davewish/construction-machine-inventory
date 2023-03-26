@@ -15,15 +15,18 @@ import { RootState } from "../store/redux/store";
 
 import uuid from "uuid-random";
 import { useDispatch } from "react-redux";
-import { addCategory, addDrawerItem } from "../store/redux/categoryReducer";
+import { addCategory } from "../store/redux/categoryReducer";
 import AddCategoryForm from "./AddCategoryForm";
 import { COLORS } from "../utils/colors";
 import { useCategories } from "../store/redux/hooks";
+import { isPortrait } from "../utils/utils";
 
 const ManagedCategory = () => {
   const { categories } = useCategories();
 
   const dispatch = useDispatch();
+
+  console.log("orienation ", isPortrait());
 
   const addNewCategoryForm = () => {
     const category = new MachineCategory(uuid(), "New Category");
@@ -34,7 +37,6 @@ const ManagedCategory = () => {
         categoryFields: category.categoryFields,
       })
     );
-    dispatch(addDrawerItem({ id: uuid(), drawerName: category.categoryName }));
   };
   const renderCategoryForm = (itemData: any) => {
     return <AddCategoryForm category={itemData.item} />;
@@ -49,6 +51,7 @@ const ManagedCategory = () => {
       <FlatList
         data={categories}
         renderItem={renderCategoryForm}
+        numColumns={isPortrait() ? 1 : 2}
         keyExtractor={(item) => item.categoryId}
       />
     );
@@ -91,3 +94,4 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 });
+

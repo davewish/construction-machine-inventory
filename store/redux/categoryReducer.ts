@@ -41,17 +41,6 @@ const categorySlice = createSlice({
 
       state.categories.splice(indexToBeRemoved, 1);
     },
-    addDrawerItem: (state, action) => {
-      state.drawerItem.splice(state.drawerItem.length - 1, 0, action.payload);
-    },
-    updateDrawerItem: (state, action) => {
-      state.drawerItem = state.drawerItem.map((item) => {
-        return item.drawerName.toLowerCase() ==
-          action.payload.oldName.toLowerCase()
-          ? { ...item, ...{ drawerName: action.payload.drawerName } }
-          : item;
-      });
-    },
   },
 });
 
@@ -59,8 +48,7 @@ export const {
   addCategory,
   updateCategory,
   removeCategory,
-  addDrawerItem,
-  updateDrawerItem,
+
   setStateFromAsyncStorage,
 } = categorySlice.actions;
 

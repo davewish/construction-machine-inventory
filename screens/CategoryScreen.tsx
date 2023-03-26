@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 
 import { Button } from "react-native-paper";
@@ -9,11 +9,10 @@ import NotFound from "../components/NoFound";
 import { setStateFromAsyncStorage } from "../store/redux/categoryReducer";
 
 import { useCategories } from "../store/redux/hooks";
-import useSaveToAsyncStorage, {
-  loadStateFromAsyncStorage,
-} from "../store/redux/save";
+import { loadStateFromAsyncStorage } from "../store/redux/save";
 
 import { COLORS } from "../utils/colors";
+import { groupDataByCategory } from "../utils/utils";
 
 interface CategoryScreenProps {
   navigation: any;
@@ -22,28 +21,30 @@ interface CategoryScreenProps {
 const CategoryScreen = ({ navigation }: CategoryScreenProps) => {
   const { categories } = useCategories();
 
-  const dispatch = useDispatch();
-  const loadData = async () => {
-    const data = await loadStateFromAsyncStorage();
-    console.log("categor persit", data);
+  const [groupedData, setGroupedData] = useState<any>([]);
 
-    if (data) {
-      dispatch(setStateFromAsyncStorage(data));
-    }
-  };
   useEffect(() => {
-    // loadData();
-  }, []);
-  useEffect(() => {
-    console.log(categories);
-  }, []);
+    const groupedData = groupDataByCategory(categories);
+    setGroupedData(groupedData);
+  }, [categories]);
+
+  const dispatch = useDispatch();
 
   const addNewCategoryHandler = () => {
     navigation.navigate("managedCategory");
   };
 
-  const renderItem = ({ item }) => {
-    return <MachineForm category={item} />;
+  const renderItem = (itemData) => {
+    return (
+      <View>
+        <Text style={styles.textHeader}> {itemData.item}</Text>
+        <FlatList
+          data={groupedData[itemData.item]}
+          keyExtractor={(item) => item.categoryId}
+          renderItem={(item) => <MachineForm category={item.item} />}
+        />
+      </View>
+    );
   };
 
   if (categories.length === 0) {
@@ -67,8 +68,8 @@ const CategoryScreen = ({ navigation }: CategoryScreenProps) => {
     <View style={styles.rootScreen}>
       {categories && (
         <FlatList
-          data={categories}
-          keyExtractor={(item) => item.categoryId}
+          data={Object.keys(groupedData)}
+          keyExtractor={(item) => item}
           renderItem={renderItem}
         />
       )}
@@ -87,5 +88,11 @@ const styles = StyleSheet.create({
 
   btn: {
     borderRadius: 8,
+  },
+  textHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 4,
+    marginBottom: 10,
   },
 });

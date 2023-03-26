@@ -3,16 +3,16 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useCategories } from "../store/redux/hooks";
 
 const CustomeDrawer = ({ navigation }) => {
-  const { drawerItem } = useCategories();
+  const { categoryNames } = useCategories();
   return (
     <View style={styles.container}>
-      {drawerItem.map((item) => (
+      {categoryNames.map((item) => (
         <Pressable
           key={item.id}
           style={[styles.item]}
-          onPress={() => navigation.navigate(item.drawerName)}
+          onPress={() => navigation.navigate(item.name)}
         >
-          <Text style={styles.name}>{item.drawerName}</Text>
+          <Text style={styles.name}>{item.name}</Text>
         </Pressable>
       ))}
     </View>

@@ -16,6 +16,7 @@ import {
 } from "../store/redux/categoryReducer";
 import FieldItem from "../components/FieldItem";
 import { useCategories } from "../store/redux/hooks";
+import { isPortrait } from "../utils/utils";
 
 interface AddCategoryFormProps {
   category: MachineCategory;
@@ -38,12 +39,9 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
   };
 
   const categoryNameTextInputHandler = (text: string) => {
-    const oldName = category.categoryName;
     category.categoryName = text;
 
     dispatch(updateCategory(category));
-
-    // dispatch(updateDrawerItem({ drawerName: category.categoryName, oldName }));
   };
   const categoryRemoveHandler = () => {
     dispatch(removeCategory(category));
@@ -140,7 +138,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 15,
-    width: "100%",
+    width: isPortrait() ? "100%" : "50%",
 
     elevation: 4,
   },
