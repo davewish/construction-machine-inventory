@@ -46,12 +46,14 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
     );
     if (currentCategory) {
       machine.fields = currentCategory.categoryFields.map((category) => {
-        let defaultValue: number | string | Date;
+        let defaultValue: number | string | Date | boolean;
         const type = category.fieldType.toLowerCase();
         if (type === "number") {
           defaultValue = 0;
         } else if (type === "text") {
           defaultValue = "";
+        } else if (type === "checkbox") {
+          defaultValue = false;
         } else {
           defaultValue = new Date();
         }

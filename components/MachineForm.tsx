@@ -10,33 +10,51 @@ import { DatePickerIOS } from "react-native";
 import { COLORS } from "../utils/colors";
 import { Machine, MachineField } from "../models/Machine";
 import { useDispatch } from "react-redux";
-import { removeMchine } from "../store/redux/categoryReducer";
+import { removeMchine, updateMachine } from "../store/redux/categoryReducer";
 
 interface MachineFormProps {
   machine: Machine;
 }
 const MachineForm = ({ machine }: MachineFormProps) => {
-  const onChange = (event, selectedDate) => {
-    //setDate(currentDate);
-  };
-
   const dispatch = useDispatch();
 
-  const showMode = () => {
-    DateTimePickerAndroid.open({
-      value: new Date(),
-      onChange,
-      mode: "date",
-      is24Hour: true,
-    });
+  const updateValue = (
+    value: string | number | Date | boolean,
+    fieldId: string
+  ) => {
+    const currentField = machine.fields.find(
+      (field) => field.fieldId === fieldId
+    );
+    if (currentField) {
+      currentField.fieldValue = value;
+      dispatch(updateMachine(machine));
+    }
+  };
+  const changeDateHandler = (selectedDate: any, id: string) => {
+    updateValue(new Date(selectedDate.nativeEvent.timestamp), id);
   };
 
-  const changeInputHandler = (value: string) => {};
+  const changeInputHandler = (value: string, id: string) => {
+    updateValue(value, id);
+  };
   const removeMachineHandler = () => {
     dispatch(removeMchine(machine));
   };
+  const checkboxHandler = (value: boolean, id: string) => {
+    updateValue(!value, id);
+  };
 
   const renderInputType = (field: MachineField): JSX.Element => {
+    const showMode = () => {
+      DateTimePickerAndroid.open({
+        value: new Date(),
+        onChange: (value) => {
+          changeDateHandler(value, field.fieldId);
+        },
+        mode: "date",
+        is24Hour: true,
+      });
+    };
     switch (field.fieldType) {
       case "Number":
         return (
@@ -48,7 +66,7 @@ const MachineForm = ({ machine }: MachineFormProps) => {
               keyboardType="numeric"
               value={field.fieldValue.toString()}
               underlineColor={"transparent"}
-              ///onChangeText={textInputHansdler}
+              onChangeText={(input) => changeInputHandler(input, field.fieldId)}
             />
           </View>
         );
@@ -61,11 +79,19 @@ const MachineForm = ({ machine }: MachineFormProps) => {
               style={styles.categoryNameTextBox}
               value={field.fieldValue.toString()}
               underlineColor={"transparent"}
+              onChangeText={(input) => changeInputHandler(input, field.fieldId)}
             />
           </View>
         );
       case "Checkbox":
-        return <Checkbox status={"checked"} />;
+        return (
+          <Checkbox
+            onPress={() => {
+              checkboxHandler(field.fieldValue as boolean, field.fieldId);
+            }}
+            status={field.fieldValue ? "checked" : "unchecked"}
+          />
+        );
       case "Date":
         return (
           <View style={styles.dateTimeContainer}>

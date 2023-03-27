@@ -42,6 +42,13 @@ const categorySlice = createSlice({
     addMachine: (state, action: PayloadAction<Machine>) => {
       state.machines.push(action.payload);
     },
+    updateMachine: (state, action: PayloadAction<Machine>) => {
+      state.machines = state.machines.map((machine) => {
+        return machine.machineId === action.payload.machineId
+          ? { ...machine, ...action.payload }
+          : machine;
+      });
+    },
     removeMchine: (state, action: PayloadAction<Machine>) => {
       const { machines } = state;
       const indexToBeRemoved = machines.findIndex(
@@ -60,6 +67,7 @@ export const {
 
   setStateFromAsyncStorage,
   addMachine,
+  updateMachine,
   removeMchine,
 } = categorySlice.actions;
 

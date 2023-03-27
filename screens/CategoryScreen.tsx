@@ -10,19 +10,16 @@ import {
 } from "react-native";
 
 import { Button } from "react-native-paper";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+
 import MachineForm from "../components/MachineForm";
 import NotFound from "../components/NoFound";
-import { MachineCategory } from "../models/Category";
-import { setStateFromAsyncStorage } from "../store/redux/categoryReducer";
 
 import { useCategories } from "../store/redux/hooks";
-import { loadStateFromAsyncStorage } from "../store/redux/save";
 
 import { COLORS } from "../utils/colors";
 import { InventoryParamList } from "../utils/type";
 import { groupDataByCategory } from "../utils/utils";
+import uuid from "uuid-random";
 
 type CategoryRouteProp = RouteProp<InventoryParamList, "Category">;
 
@@ -52,12 +49,12 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
 
   const renderItem = ({ item }: ListRenderItemInfo<string>) => {
     return (
-      <View key={item}>
+      <View key={uuid()}>
         <Text style={styles.textHeader}> {item}</Text>
         <FlatList
           contentContainerStyle={{ padding: 4 }}
           data={groupedData[item]}
-          keyExtractor={(item) => item.categoryId}
+          keyExtractor={(item) => item.machineId}
           renderItem={(item) => <MachineForm machine={item.item} />}
         />
       </View>
@@ -87,7 +84,7 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
         <FlatList
           contentContainerStyle={{ padding: 4 }}
           data={Object.keys(groupedData)}
-          keyExtractor={(item, index) => item + index}
+          keyExtractor={(item, index) => uuid()}
           renderItem={renderItem}
         />
       )}

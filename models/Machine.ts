@@ -4,7 +4,7 @@ export interface MachineField {
   fieldId: string;
   fieldName: string;
   fieldType: string;
-  fieldValue: number | string | Date;
+  fieldValue: number | string | Date | boolean;
 }
 export class Machine {
   machineId: string;
