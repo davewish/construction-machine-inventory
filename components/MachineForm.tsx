@@ -127,15 +127,13 @@ const MachineForm = ({ machine }: MachineFormProps) => {
       {machine && machine.fields && (
         <View style={styles.btnContainer}>
           <Button
-            buttonColor={"red"}
-            textColor="#000"
+            buttonColor={"#fff"}
+            textColor="red"
             icon={"delete"}
             style={styles.btn}
             mode="contained"
             onPress={removeMachineHandler}
-          >
-            Remove
-          </Button>
+          />
         </View>
       )}
     </View>
@@ -145,11 +143,12 @@ export default MachineForm;
 
 const styles = StyleSheet.create({
   rootScreen: {
-    width: "100%",
+    width: "50%",
     backgroundColor: "#fff",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     paddingVertical: 10,
-    margin: 20,
+    marginVertical: 10,
+    marginHorizontal: 8,
     borderRadius: 8,
     elevation: 4,
   },
@@ -178,9 +177,10 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderRadius: 8,
-    padding: 2,
-    marginLeft: 6,
+    width: "10%",
+    paddingTop: 2,
   },
+
   btnContainer: {
     margin: 10,
     alignItems: "flex-end",

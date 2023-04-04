@@ -7,6 +7,8 @@ import {
   StyleSheet,
   FlatList,
   ListRenderItemInfo,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 
 import { Button } from "react-native-paper";
@@ -55,6 +57,7 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
           contentContainerStyle={{ padding: 4 }}
           data={groupedData[item]}
           keyExtractor={(item) => item.machineId}
+          numColumns={2}
           renderItem={(item) => <MachineForm machine={item.item} />}
         />
       </View>
@@ -63,18 +66,23 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
 
   if (machines.length === 0) {
     return (
-      <View style={styles.rootScreen}>
-        <NotFound />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS !== "ios" ? "height" : "padding"}
+      >
+        <View style={styles.rootScreen}>
+          <NotFound />
 
-        <Button
-          buttonColor={COLORS.primary}
-          style={styles.btn}
-          mode="contained"
-          onPress={addNewCategoryHandler}
-        >
-          Add new
-        </Button>
-      </View>
+          <Button
+            buttonColor={COLORS.primary}
+            style={styles.btn}
+            mode="contained"
+            onPress={addNewCategoryHandler}
+          >
+            Add new
+          </Button>
+        </View>
+      </KeyboardAvoidingView>
     );
   }
 

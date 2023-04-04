@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import { View, Text, StyleSheet } from "react-native";
 import { Button, Menu, TextInput } from "react-native-paper";
@@ -13,6 +13,7 @@ import { removeCategory, updateCategory } from "../store/redux/categoryReducer";
 import FieldItem from "../components/FieldItem";
 
 import { isPortrait } from "../utils/utils";
+import { useCategories, useDeviceWidth } from "../store/redux/hooks";
 
 interface AddCategoryFormProps {
   category: MachineCategory;
@@ -23,6 +24,7 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
 
+  const { deviceWidth } = useCategories();
   const dispatch = useDispatch();
 
   const menuItemHandler = (value: string) => {
@@ -43,7 +45,12 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
     dispatch(removeCategory(category));
   };
   return (
-    <View style={styles.rootContainer}>
+    <View
+      style={[
+        styles.rootContainer,
+        deviceWidth < 500 ? { width: "100%" } : { width: "50%" },
+      ]}
+    >
       <Text style={styles.title}>{category.categoryName}</Text>
       <View>
         <Text style={styles.categoryNameText}>Category Name </Text>
@@ -127,14 +134,12 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
 export default AddCategoryForm;
 const styles = StyleSheet.create({
   rootContainer: {
-    flex: 1,
     backgroundColor: "#fff",
     margin: 4,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 15,
-    width: isPortrait() ? "100%" : "50%",
 
     elevation: 4,
   },

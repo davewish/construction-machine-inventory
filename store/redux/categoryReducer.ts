@@ -6,11 +6,13 @@ import { Machine } from "../../models/Machine";
 interface IntialState {
   categories: MachineCategory[];
   machines: Machine[];
+  deviceWidth: number;
 }
 const initialState: IntialState = {
   categories: [],
 
   machines: [],
+  deviceWidth: 800,
 };
 
 const categorySlice = createSlice({
@@ -57,6 +59,10 @@ const categorySlice = createSlice({
 
       state.machines.splice(indexToBeRemoved, 1);
     },
+    updateDeviceWidth: (state, action) => {
+      console.log("reducer", action.payload.width);
+      state.deviceWidth = action.payload.width;
+    },
   },
 });
 
@@ -69,6 +75,7 @@ export const {
   addMachine,
   updateMachine,
   removeMchine,
+  updateDeviceWidth,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

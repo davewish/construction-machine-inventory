@@ -1,5 +1,12 @@
 import React, { useLayoutEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import MachineForm from "../components/MachineForm";
 import { useCategories } from "../store/redux/hooks";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -91,13 +98,20 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
     });
   }, [categoryName]);
   return (
-    <View style={styles.rootScreen}>
-      <FlatList
-        data={selectedMachines(categoryName)}
-        keyExtractor={(item) => item.machineId}
-        renderItem={(item) => <MachineForm machine={item.item} />}
-      />
-    </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS !== "ios" ? "height" : "padding"}
+    >
+      <View style={styles.rootScreen}>
+        <FlatList
+          contentContainerStyle={{ paddingHorizontal: 12 }}
+          data={selectedMachines(categoryName)}
+          keyExtractor={(item) => item.machineId}
+          numColumns={2}
+          renderItem={(item) => <MachineForm machine={item.item} />}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 export default MachineTypeDetail;

@@ -1,6 +1,8 @@
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import uuid from "uuid-random";
+import { useEffect, useState } from "react";
+import { Dimensions } from "react-native";
 
 export const useCategories = () => {
   const machineCategories = useSelector(
@@ -14,6 +16,9 @@ export const useCategories = () => {
   const selectedMachines = (categoryName: string) => {
     return machines.filter((machine) => machine.categoryName === categoryName);
   };
+  const deviceWidth = useSelector(
+    (state: RootState) => state.persistRed.deviceWidth
+  );
 
   return {
     categories: machineCategories,
@@ -24,5 +29,8 @@ export const useCategories = () => {
     ],
     selectedMachines,
     machines,
+    deviceWidth,
   };
 };
+
+

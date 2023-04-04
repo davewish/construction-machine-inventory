@@ -11,7 +11,11 @@ const NotFound = () => {
 export default NotFound;
 
 const styles = StyleSheet.create({
-  rootScreen: {},
+  rootScreen: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   noFoundText: {
     fontSize: 18,
     fontWeight: "300",

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Button } from "react-native-paper";
@@ -15,7 +16,7 @@ import { RootState } from "../store/redux/store";
 
 import uuid from "uuid-random";
 import { useDispatch } from "react-redux";
-import { addCategory } from "../store/redux/categoryReducer";
+import { addCategory, updateDeviceWidth } from "../store/redux/categoryReducer";
 import AddCategoryForm from "./AddCategoryForm";
 import { COLORS } from "../utils/colors";
 import { useCategories } from "../store/redux/hooks";
@@ -43,10 +44,19 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
   navigation,
   route,
 }) => {
-  const { categories } = useCategories();
+  const { categories, deviceWidth } = useCategories();
 
   const dispatch = useDispatch();
 
+  const onLayout = () => {
+    const { width } = Dimensions.get("window");
+    dispatch(updateDeviceWidth({ width }));
+  };
+
+  useEffect(() => {
+    Dimensions.addEventListener("change", onLayout);
+    return () => {};
+  }, [deviceWidth]);
   const addNewCategoryForm = () => {
     const category = new MachineCategory(uuid(), "New Category");
     dispatch(
@@ -66,12 +76,22 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
       <>
         <NotFound />
       </>
+    ) : deviceWidth < 500 ? (
+      <FlatList
+        key={uuid()}
+        data={categories}
+        contentContainerStyle={{ paddingHorizontal: 20 }}
+        renderItem={renderCategoryForm}
+        numColumns={1}
+        keyExtractor={(item) => item.categoryId}
+      />
     ) : (
       <FlatList
+        key={uuid()}
         data={categories}
-        contentContainerStyle={{ padding: 4 }}
+        contentContainerStyle={{ padding: 20 }}
         renderItem={renderCategoryForm}
-        numColumns={isPortrait() ? 1 : 2}
+        numColumns={2}
         keyExtractor={(item) => item.categoryId}
       />
     );
@@ -79,9 +99,9 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS !== "ios" ? "height" : "padding"}
     >
-      <View style={styles.rootScreen}>
+      <View style={styles.rootScreen} onLayout={onLayout}>
         <View style={styles.flatListContainer}>{displayContent}</View>
         <View style={styles.addBtnContainer}>
           <Button
@@ -114,4 +134,3 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 });
-
