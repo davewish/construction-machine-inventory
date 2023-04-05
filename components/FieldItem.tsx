@@ -44,36 +44,42 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
     }
   };
 
-  const textInputHandler = useCallback((text: string) => {
-    const { filteredField, fieldNames } = updateFields();
+  const textInputHandler = useCallback(
+    (text: string) => {
+      const { filteredField, fieldNames } = updateFields();
 
-    if (filteredField && fieldNames.indexOf(text) < 0) {
-      dispatch(
-        updateCategoryFields({
-          categoryId,
-          field: { ...filteredField, fieldName: text },
-        })
-      );
-    }
-  }, []);
+      if (filteredField && fieldNames.indexOf(text) < 0) {
+        dispatch(
+          updateCategoryFields({
+            categoryId,
+            field: { ...filteredField, fieldName: text },
+          })
+        );
+      }
+    },
+    [field]
+  );
 
   const handleRemoveField = useCallback(() => {
     dispatch(removeFields({ categoryId: categoryId, fieldId: field.fieldId }));
   }, []);
 
-  const fieldTypeHandler = useCallback((value: string) => {
-    const { filteredField } = updateFields();
+  const fieldTypeHandler = useCallback(
+    (value: string) => {
+      const { filteredField } = updateFields();
 
-    if (filteredField) {
-      dispatch(
-        updateCategoryFields({
-          categoryId,
-          field: { ...filteredField, fieldType: value },
-        })
-      );
-    }
-    closeMenu();
-  }, []);
+      if (filteredField) {
+        dispatch(
+          updateCategoryFields({
+            categoryId,
+            field: { ...filteredField, fieldType: value },
+          })
+        );
+      }
+      closeMenu();
+    },
+    [field]
+  );
 
   const { fieldName, fieldType } = field;
 

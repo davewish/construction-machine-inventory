@@ -34,6 +34,7 @@ const categorySlice = createSlice({
       state,
       action: PayloadAction<{ categoryId: string; field: Field }>
     ) => {
+      console.log("field to be update", action.payload.field);
       const category: MachineCategory | undefined = state.categories.find(
         (category) => category.categoryId === action.payload.categoryId
       );
@@ -57,6 +58,7 @@ const categorySlice = createSlice({
         } else {
           category.categoryFields.push(action.payload.field);
         }
+        console.log("state after update", state.categories[categoryIndex]);
       }
     },
 
@@ -110,7 +112,6 @@ export const {
   updateCategoryName,
   removeCategory,
   updateCategoryFields,
-
   updateFieldTitle,
   removeFields,
 } = categorySlice.actions;

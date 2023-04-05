@@ -38,9 +38,9 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
     []
   );
 
-  const { deviceWidth, fieldsNames } = useCategories();
+  const { deviceWidth, fieldsNames, categories } = useCategories();
   const dispatch = useDispatch();
-
+  console.log("categroies recent ", JSON.stringify(categories));
   const menuItemHandler = useCallback((value: string) => {
     const fields = {
       categoryId: category.categoryId,
@@ -65,6 +65,18 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
     );
     closeMenuTitleField();
   }, []);
+  const renderFieldItems = useCallback(() => {
+    return (
+      category.categoryFields &&
+      category.categoryFields.map((field) => (
+        <FieldItem
+          key={field.fieldId}
+          field={field}
+          categoryId={category.categoryId}
+        />
+      ))
+    );
+  }, [category.categoryFields]);
   return (
     <View
       style={[
@@ -82,16 +94,7 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
           defaultValue={category.categoryName}
         />
       </View>
-      <View>
-        {category.categoryFields &&
-          category.categoryFields.map((field) => (
-            <FieldItem
-              key={field.fieldId}
-              field={field}
-              categoryId={category.categoryId}
-            />
-          ))}
-      </View>
+      <View>{renderFieldItems()}</View>
       <View style={styles.btnContainer}>
         <Menu
           theme={{

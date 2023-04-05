@@ -48,11 +48,13 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
 
   const dispatch = useDispatch();
 
-  const addNewItemHandler = useCallback(() => {
+  const addNewItemHandler = () => {
     const machine = new Machine(uuid(), categoryName);
+
     const currentCategory: MachineCategory | undefined = categories.find(
       (category: MachineCategory) => category.categoryName === categoryName
     );
+    console.log("current", currentCategory);
     if (currentCategory) {
       machine.fields = currentCategory.categoryFields.map((category) => {
         let defaultValue: number | string | Date | boolean;
@@ -76,7 +78,7 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
     }
 
     dispatch(addMachine({ ...machine }));
-  }, [categoryName]);
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({

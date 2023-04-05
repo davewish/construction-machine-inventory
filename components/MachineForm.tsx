@@ -46,71 +46,78 @@ const MachineForm = ({ machine }: MachineFormProps) => {
     updateValue(!value, id);
   }, []);
 
-  const renderInputType = useCallback((field: MachineField): JSX.Element => {
-    const showMode = () => {
-      DateTimePickerAndroid.open({
-        value: new Date(),
-        onChange: (value) => {
-          changeDateHandler(value, field.fieldId);
-        },
-        mode: "date",
-        is24Hour: true,
-      });
-    };
-    switch (field.fieldType) {
-      case "Number":
-        return (
-          <View>
-            <TextInput
-              label={field.fieldName}
-              mode="outlined"
-              style={styles.categoryNameTextBox}
-              keyboardType="numeric"
-              value={field.fieldValue.toString()}
-              underlineColor={"transparent"}
-              onChangeText={(input) => changeInputHandler(input, field.fieldId)}
+  const renderInputType = useCallback(
+    (field: MachineField): JSX.Element => {
+      const showMode = () => {
+        DateTimePickerAndroid.open({
+          value: new Date(),
+          onChange: (value) => {
+            changeDateHandler(value, field.fieldId);
+          },
+          mode: "date",
+          is24Hour: true,
+        });
+      };
+      switch (field.fieldType) {
+        case "Number":
+          return (
+            <View>
+              <TextInput
+                label={field.fieldName}
+                mode="outlined"
+                style={styles.categoryNameTextBox}
+                keyboardType="numeric"
+                value={field.fieldValue.toString()}
+                underlineColor={"transparent"}
+                onChangeText={(input) =>
+                  changeInputHandler(input, field.fieldId)
+                }
+              />
+            </View>
+          );
+        case "Text":
+          return (
+            <View>
+              <TextInput
+                label={field.fieldName}
+                mode="outlined"
+                style={styles.categoryNameTextBox}
+                value={field.fieldValue.toString()}
+                underlineColor={"transparent"}
+                onChangeText={(input) =>
+                  changeInputHandler(input, field.fieldId)
+                }
+              />
+            </View>
+          );
+        case "Checkbox":
+          return (
+            <Checkbox
+              onPress={() => {
+                checkboxHandler(field.fieldValue as boolean, field.fieldId);
+              }}
+              status={field.fieldValue ? "checked" : "unchecked"}
             />
-          </View>
-        );
-      case "Text":
-        return (
-          <View>
-            <TextInput
-              label={field.fieldName}
-              mode="outlined"
-              style={styles.categoryNameTextBox}
-              value={field.fieldValue.toString()}
-              underlineColor={"transparent"}
-              onChangeText={(input) => changeInputHandler(input, field.fieldId)}
-            />
-          </View>
-        );
-      case "Checkbox":
-        return (
-          <Checkbox
-            onPress={() => {
-              checkboxHandler(field.fieldValue as boolean, field.fieldId);
-            }}
-            status={field.fieldValue ? "checked" : "unchecked"}
-          />
-        );
-      case "Date":
-        return (
-          <View style={styles.dateTimeContainer}>
-            <TextInput
-              label={field.fieldName}
-              mode="outlined"
-              style={[styles.categoryNameTextBox, { flex: 1 }]}
-              value={new Date(field.fieldValue).toDateString()}
-              underlineColor={"transparent"}
-              onFocus={showMode}
-            />
-          </View>
-        );
-      default:
-        return <></>;
-    }
-  }, []);
+          );
+        case "Date":
+          return (
+            <View style={styles.dateTimeContainer}>
+              <TextInput
+                label={field.fieldName}
+                mode="outlined"
+                style={[styles.categoryNameTextBox, { flex: 1 }]}
+                value={new Date(field.fieldValue).toDateString()}
+                underlineColor={"transparent"}
+                onFocus={showMode}
+              />
+            </View>
+          );
+        default:
+          return <></>;
+      }
+    },
+    [machine]
+  );
   // if (machine && machine.fields.length < 1) {
   //   return <></>;
   // }

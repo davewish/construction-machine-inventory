@@ -68,11 +68,11 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
       })
     );
   }, []);
-  const renderCategoryForm = useCallback((itemData: any) => {
+  const renderCategoryForm = (itemData: any) => {
     return <AddCategoryForm category={itemData.item} />;
-  }, []);
+  };
 
-  const displayContent = useMemo(() => {
+  const displayContent = () => {
     return categories.length === 0 ? (
       <>
         <NotFound />
@@ -94,7 +94,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
         keyExtractor={(item) => item.categoryId}
       />
     );
-  }, [categories, deviceWidth]);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -102,7 +102,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
       behavior={Platform.OS !== "ios" ? "height" : "padding"}
     >
       <View style={styles.rootScreen} onLayout={onLayout}>
-        <View style={styles.flatListContainer}>{displayContent}</View>
+        <View style={styles.flatListContainer}>{displayContent()}</View>
         <View style={styles.addBtnContainer}>
           <Button
             buttonColor={COLORS.primary}

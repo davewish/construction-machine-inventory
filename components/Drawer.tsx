@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useCategories } from "../store/redux/hooksCategory";
 
 const CustomeDrawer = ({ navigation }: { navigation: any }) => {
-  const { categoryNames } = useCategories();
+  const { categoryNames, categories } = useCategories();
 
   const handleDrawerNavigation = useCallback(
     (item: { id: string; name: string }) => {
@@ -18,7 +18,7 @@ const CustomeDrawer = ({ navigation }: { navigation: any }) => {
         });
       }
     },
-    []
+    [categories]
   );
   return (
     <View style={styles.container}>
