@@ -41,30 +41,39 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
   const { deviceWidth, fieldsNames, categories } = useCategories();
   const dispatch = useDispatch();
 
-  const menuItemHandler = useCallback((value: string) => {
-    const fields = {
-      categoryId: category.categoryId,
-      field: { fieldId: uuid(), fieldName: "", fieldType: value },
-    };
+  const menuItemHandler = useCallback(
+    (value: string) => {
+      const fields = {
+        categoryId: category.categoryId,
+        field: { fieldId: uuid(), fieldName: "", fieldType: value },
+      };
 
-    dispatch(updateCategoryFields(fields));
-    closeMenu();
-  }, []);
+      dispatch(updateCategoryFields(fields));
+      closeMenu();
+    },
+    [dispatch, closeMenu, updateCategoryFields]
+  );
 
-  const categoryNameTextInputHandler = useCallback((text: string) => {
-    dispatch(updateCategoryName({ ...category, categoryName: text }));
-  }, []);
+  const categoryNameTextInputHandler = useCallback(
+    (text: string) => {
+      dispatch(updateCategoryName({ ...category, categoryName: text }));
+    },
+    [dispatch, updateCategoryName]
+  );
 
   const categoryRemoveHandler = useCallback(() => {
     dispatch(removeCategory(category));
-  }, []);
+  }, [dispatch, removeCategory]);
 
-  const fieldTitleHandler = useCallback((value: string) => {
-    dispatch(
-      updateFieldTitle({ categoryId: category.categoryId, fieldTitle: value })
-    );
-    closeMenuTitleField();
-  }, []);
+  const fieldTitleHandler = useCallback(
+    (value: string) => {
+      dispatch(
+        updateFieldTitle({ categoryId: category.categoryId, fieldTitle: value })
+      );
+      closeMenuTitleField();
+    },
+    [dispatch, closeMenuTitleField]
+  );
   const renderFieldItems = useCallback(() => {
     return (
       category.categoryFields &&

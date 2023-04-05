@@ -78,7 +78,7 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
       });
     }
     dispatch(addMachine({ ...machine, fields }));
-  }, [categories, categoryId, categoryName]);
+  }, [categories, categoryId, categoryName, dispatch, addMachine]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -101,7 +101,7 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
         </Button>
       ),
     });
-  }, [categoryName, categories, categoryId]);
+  }, [categoryName, categories, categoryId, addNewItemHandler]);
 
   return (
     <KeyboardAvoidingView

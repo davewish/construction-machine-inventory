@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -48,12 +54,12 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
 
   const dispatch = useDispatch();
 
-  const onLayout = () => {
+  const onLayout = useCallback(() => {
     const { width } = Dimensions.get("window");
     dispatch(updateDeviceWidth(width));
-  };
+  }, [dispatch, updateDeviceWidth]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     Dimensions.addEventListener("change", onLayout);
   }, [deviceWidth]);
 
@@ -67,7 +73,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
         titleField: "",
       })
     );
-  }, []);
+  }, [dispatch, addCategory]);
   const renderCategoryForm = useCallback((itemData: any) => {
     return <AddCategoryForm category={itemData.item} />;
   }, []);

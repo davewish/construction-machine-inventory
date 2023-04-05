@@ -46,7 +46,7 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
     },
     [machines]
   );
-  useEffect(() => {}, [machines]);
+
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<string>) => {
       return (

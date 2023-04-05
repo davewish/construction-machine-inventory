@@ -28,7 +28,7 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
 
   const dispatch = useDispatch();
 
-  const updateFields = () => {
+  const updateFields = useCallback(() => {
     const category = categories.find(
       (category) => category.categoryId === categoryId
     );
@@ -42,7 +42,7 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
 
       return { filteredField, fieldNames };
     }
-  };
+  }, [categories, categoryId]);
 
   const textInputHandler = useCallback(
     (text: string) => {
@@ -57,7 +57,7 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
         );
       }
     },
-    [field]
+    [field, dispatch, updateCategoryFields]
   );
 
   const handleRemoveField = useCallback(() => {
@@ -78,7 +78,7 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
       }
       closeMenu();
     },
-    [field]
+    [field, dispatch, updateCategoryFields, closeMenu]
   );
 
   const { fieldName, fieldType } = field;
