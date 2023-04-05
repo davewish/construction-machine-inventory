@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,20 +7,19 @@ import {
   Platform,
   Dimensions,
 } from "react-native";
-import { useSelector } from "react-redux";
+
 import { Button } from "react-native-paper";
 
 import NotFound from "../components/NoFound";
 import { MachineCategory } from "../models/Category";
-import { RootState } from "../store/redux/store";
 
 import uuid from "uuid-random";
 import { useDispatch } from "react-redux";
 import { addCategory, updateDeviceWidth } from "../store/redux/categoryReducer";
 import AddCategoryForm from "./AddCategoryForm";
 import { COLORS } from "../utils/colors";
-import { useCategories } from "../store/redux/hooks";
-import { isPortrait } from "../utils/utils";
+import { useCategories } from "../store/redux/hooksCategory";
+
 import { InventoryParamList } from "../utils/type";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RouteProp } from "@react-navigation/native";
@@ -48,16 +47,17 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
 
   const dispatch = useDispatch();
 
-  const onLayout = () => {
+  const onLayout = useCallback(() => {
     const { width } = Dimensions.get("window");
     dispatch(updateDeviceWidth({ width }));
-  };
+  }, []);
 
   useEffect(() => {
     Dimensions.addEventListener("change", onLayout);
     return () => {};
   }, [deviceWidth]);
-  const addNewCategoryForm = () => {
+
+  const addNewCategoryForm = useCallback(() => {
     const category = new MachineCategory(uuid(), "New Category");
     dispatch(
       addCategory({
@@ -66,19 +66,18 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
         categoryFields: category.categoryFields,
       })
     );
-  };
-  const renderCategoryForm = (itemData: any) => {
+  }, []);
+  const renderCategoryForm = useCallback((itemData: any) => {
     return <AddCategoryForm category={itemData.item} />;
-  };
+  }, []);
 
-  const displayContent: React.ReactElement =
-    categories.length === 0 ? (
+  const displayContent = useCallback(() => {
+    return categories.length === 0 ? (
       <>
         <NotFound />
       </>
     ) : deviceWidth < 500 ? (
       <FlatList
-        key={uuid()}
         data={categories}
         contentContainerStyle={{ paddingHorizontal: 20 }}
         renderItem={renderCategoryForm}
@@ -87,7 +86,6 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
       />
     ) : (
       <FlatList
-        key={uuid()}
         data={categories}
         contentContainerStyle={{ padding: 20 }}
         renderItem={renderCategoryForm}
@@ -95,6 +93,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
         keyExtractor={(item) => item.categoryId}
       />
     );
+  }, [categories]);
 
   return (
     <KeyboardAvoidingView
@@ -102,7 +101,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
       behavior={Platform.OS !== "ios" ? "height" : "padding"}
     >
       <View style={styles.rootScreen} onLayout={onLayout}>
-        <View style={styles.flatListContainer}>{displayContent}</View>
+        <View style={styles.flatListContainer}>{displayContent()}</View>
         <View style={styles.addBtnContainer}>
           <Button
             buttonColor={COLORS.primary}

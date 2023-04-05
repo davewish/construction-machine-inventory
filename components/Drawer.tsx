@@ -1,27 +1,32 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { useCategories } from "../store/redux/hooks";
+import { useCategories } from "../store/redux/hooksCategory";
 
 const CustomeDrawer = ({ navigation }: { navigation: any }) => {
   const { categoryNames } = useCategories();
+
+  const handleDrawerNavigation = useCallback(
+    (item: { id: string; name: string }) => {
+      if (
+        item.name === categoryNames[0].name ||
+        item.name === categoryNames[categoryNames.length - 1].name
+      ) {
+        navigation.navigate(item.name);
+      } else {
+        navigation.navigate("MachineTypeDetail", {
+          categoryName: item.name,
+        });
+      }
+    },
+    []
+  );
   return (
     <View style={styles.container}>
       {categoryNames.map((item) => (
         <Pressable
           key={item.id}
           style={[styles.item]}
-          onPress={() => {
-            if (
-              item.name === categoryNames[0].name ||
-              item.name === categoryNames[categoryNames.length - 1].name
-            ) {
-              navigation.navigate(item.name);
-            } else {
-              navigation.navigate("MachineTypeDetail", {
-                categoryName: item.name,
-              });
-            }
-          }}
+          onPress={() => handleDrawerNavigation(item)}
         >
           <Text style={styles.name}>{item.name}</Text>
         </Pressable>

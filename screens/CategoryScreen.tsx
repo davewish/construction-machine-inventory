@@ -1,6 +1,6 @@
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RouteProp } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -16,12 +16,11 @@ import { Button } from "react-native-paper";
 import MachineForm from "../components/MachineForm";
 import NotFound from "../components/NoFound";
 
-import { useCategories } from "../store/redux/hooks";
-
 import { COLORS } from "../utils/colors";
 import { InventoryParamList } from "../utils/type";
-import { groupDataByCategory } from "../utils/utils";
+
 import uuid from "uuid-random";
+import { useMachine } from "../store/redux/hooksMachine";
 
 type CategoryRouteProp = RouteProp<InventoryParamList, "Category">;
 
@@ -36,35 +35,37 @@ type Categoryprops = {
 };
 
 const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
-  const { machines } = useCategories();
+  const { machines, groupedData } = useMachine();
 
-  const [groupedData, setGroupedData] = useState<any>([]);
-
-  useEffect(() => {
-    const groupedData = groupDataByCategory(machines);
-    setGroupedData(groupedData);
-  }, [machines]);
-
-  const addNewCategoryHandler = () => {
+  const addNewCategoryHandler = useCallback(() => {
     navigation.navigate("ManagedCategory");
-  };
+  }, []);
+  const renderMachineForm = useCallback(
+    (itemData) => {
+      return <MachineForm machine={itemData.item} />;
+    },
+    [machines]
+  );
+  useEffect(() => {}, [machines]);
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<string>) => {
+      return (
+        <View>
+          <Text style={styles.textHeader}> {item}</Text>
+          <FlatList
+            contentContainerStyle={{ padding: 4 }}
+            data={groupedData[item]}
+            keyExtractor={(item) => item.machineId}
+            numColumns={2}
+            renderItem={renderMachineForm}
+          />
+        </View>
+      );
+    },
+    [machines, groupedData]
+  );
 
-  const renderItem = ({ item }: ListRenderItemInfo<string>) => {
-    return (
-      <View key={uuid()}>
-        <Text style={styles.textHeader}> {item}</Text>
-        <FlatList
-          contentContainerStyle={{ padding: 4 }}
-          data={groupedData[item]}
-          keyExtractor={(item) => item.machineId}
-          numColumns={2}
-          renderItem={(item) => <MachineForm machine={item.item} />}
-        />
-      </View>
-    );
-  };
-
-  if (machines.length === 0) {
+  if (Object.keys(groupedData).length === 0) {
     return (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -88,11 +89,11 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
 
   return (
     <View style={styles.rootScreen}>
-      {machines && (
+      {groupedData && (
         <FlatList
           contentContainerStyle={{ padding: 4 }}
           data={Object.keys(groupedData)}
-          keyExtractor={(item, index) => uuid()}
+          keyExtractor={(item, index) => item}
           renderItem={renderItem}
         />
       )}

@@ -1,23 +1,34 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { TextInput, Checkbox, Button } from "react-native-paper";
+import { TextInput, Checkbox, Button, Menu } from "react-native-paper";
 import DatePicker from "@react-native-community/datetimepicker";
 
 import { Field } from "../models/Category";
 import { COLORS } from "../utils/colors";
-import { useCategories } from "../store/redux/hooks";
+import { useCategories } from "../store/redux/hooksCategory";
 import { useDispatch } from "react-redux";
-import { updateCategory } from "../store/redux/categoryReducer";
+import {
+  removeFields,
+  updateCategory,
+  updateCategoryFields,
+} from "../store/redux/categoryReducer";
+import { FIELD_TYPES } from "../utils/fieldType";
+import MenuItem from "./MenuItem";
 interface FieldItemProps {
   field: Field;
   categoryId: string;
 }
 const FieldItem = ({ field, categoryId }: FieldItemProps) => {
+  const [visible, setVisible] = useState(false);
+
+  const openMenu = useCallback(() => setVisible(true), []);
+  const closeMenu = useCallback(() => setVisible(false), []);
+
   const { categories } = useCategories();
 
   const dispatch = useDispatch();
 
-  const textInputHandler = (text: string) => {
+  const updateFields = () => {
     const category = categories.find(
       (category) => category.categoryId === categoryId
     );
@@ -29,24 +40,40 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
         (field) => field.fieldName
       );
 
-      if (filteredField && fieldNames.indexOf(text) < 0) {
-        filteredField.fieldName = text;
-        dispatch(updateCategory(category));
-      }
+      return { filteredField, fieldNames };
     }
   };
 
-  const handleRemoveField = () => {
-    const category = categories.find(
-      (category) => category.categoryId === categoryId
-    );
-    if (category) {
-      category.categoryFields = category.categoryFields.filter(
-        (currentField) => currentField.fieldId != field.fieldId
+  const textInputHandler = useCallback((text: string) => {
+    const { filteredField, fieldNames } = updateFields();
+
+    if (filteredField && fieldNames.indexOf(text) < 0) {
+      dispatch(
+        updateCategoryFields({
+          categoryId,
+          field: { ...filteredField, fieldName: text },
+        })
       );
-      dispatch(updateCategory(category));
     }
-  };
+  }, []);
+
+  const handleRemoveField = useCallback(() => {
+    dispatch(removeFields({ categoryId: categoryId, fieldId: field.fieldId }));
+  }, []);
+
+  const fieldTypeHandler = useCallback((value: string) => {
+    const { filteredField } = updateFields();
+
+    if (filteredField) {
+      dispatch(
+        updateCategoryFields({
+          categoryId,
+          field: { ...filteredField, fieldType: value },
+        })
+      );
+    }
+    closeMenu();
+  }, []);
 
   const { fieldName, fieldType } = field;
 
@@ -60,8 +87,37 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
           onChangeText={textInputHandler}
         />
       </View>
+      <View style={styles.menuContainer}>
+        <Menu
+          theme={{
+            colors: {
+              background: "blue",
+            },
+          }}
+          visible={visible}
+          onDismiss={closeMenu}
+          anchor={
+            <Button
+              style={styles.btn}
+              buttonColor="#fff"
+              textColor="#000"
+              mode="text"
+              onPress={openMenu}
+            >
+              {fieldType}
+            </Button>
+          }
+        >
+          {FIELD_TYPES.map((field) => (
+            <MenuItem
+              key={field.id}
+              type={field.type}
+              onPress={fieldTypeHandler}
+            />
+          ))}
+        </Menu>
+      </View>
 
-      <Text style={styles.fieldText}> {fieldType}</Text>
       <Button
         buttonColor={"#fff"}
         textColor="red"
@@ -84,12 +140,18 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderRadius: 8,
-    height: "100%",
+
     paddingTop: 10,
     marginLeft: 8,
   },
   textInputConainer: {
     flex: 6,
+  },
+  menuContainer: {
+    flex: 3,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   textInput: {
     backgroundColor: "#ccc",

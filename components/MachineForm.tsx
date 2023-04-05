@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Checkbox, TextInput, Text } from "react-native-paper";
-import { Field, MachineCategory } from "../models/Category";
+
 import { Button } from "react-native-paper";
-import DateTimePicker, {
-  DateTimePickerAndroid,
-} from "@react-native-community/datetimepicker";
-import { DatePickerIOS } from "react-native";
-import { COLORS } from "../utils/colors";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+
 import { Machine, MachineField } from "../models/Machine";
 import { useDispatch } from "react-redux";
-import { removeMchine, updateMachine } from "../store/redux/categoryReducer";
+import { removeMchine, updateMachine } from "../store/redux/machineReducer";
 
 interface MachineFormProps {
   machine: Machine;
@@ -25,26 +22,31 @@ const MachineForm = ({ machine }: MachineFormProps) => {
     const currentField = machine.fields.find(
       (field) => field.fieldId === fieldId
     );
+
     if (currentField) {
-      currentField.fieldValue = value;
-      dispatch(updateMachine(machine));
+      dispatch(
+        updateMachine({
+          machineId: machine.machineId,
+          field: { ...currentField, fieldValue: value },
+        })
+      );
     }
   };
-  const changeDateHandler = (selectedDate: any, id: string) => {
+  const changeDateHandler = useCallback((selectedDate: any, id: string) => {
     updateValue(new Date(selectedDate.nativeEvent.timestamp), id);
-  };
+  }, []);
 
-  const changeInputHandler = (value: string, id: string) => {
+  const changeInputHandler = useCallback((value: string, id: string) => {
     updateValue(value, id);
-  };
-  const removeMachineHandler = () => {
+  }, []);
+  const removeMachineHandler = useCallback(() => {
     dispatch(removeMchine(machine));
-  };
-  const checkboxHandler = (value: boolean, id: string) => {
+  }, []);
+  const checkboxHandler = useCallback((value: boolean, id: string) => {
     updateValue(!value, id);
-  };
+  }, []);
 
-  const renderInputType = (field: MachineField): JSX.Element => {
+  const renderInputType = useCallback((field: MachineField): JSX.Element => {
     const showMode = () => {
       DateTimePickerAndroid.open({
         value: new Date(),
@@ -108,7 +110,7 @@ const MachineForm = ({ machine }: MachineFormProps) => {
       default:
         return <></>;
     }
-  };
+  }, []);
   // if (machine && machine.fields.length < 1) {
   //   return <></>;
   // }

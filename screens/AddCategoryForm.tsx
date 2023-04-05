@@ -1,7 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
-import { View, Text, StyleSheet } from "react-native";
-import { Button, Menu, TextInput } from "react-native-paper";
+import { View, Text, StyleSheet, TextInput } from "react-native";
+import { Button, Menu } from "react-native-paper";
+import { useDebouncedCallback } from "use-debounce";
+import cloneDeep from "lodash/cloneDeep";
 
 import { MachineCategory } from "../models/Category";
 import { COLORS } from "../utils/colors";
@@ -9,11 +11,15 @@ import { FIELD_TYPES } from "../utils/fieldType";
 import MenuItem from "../components/MenuItem";
 import { useDispatch } from "react-redux";
 import uuid from "uuid-random";
-import { removeCategory, updateCategory } from "../store/redux/categoryReducer";
+import {
+  removeCategory,
+  updateCategoryFields,
+  updateCategoryName,
+  updateFieldTitle,
+} from "../store/redux/categoryReducer";
 import FieldItem from "../components/FieldItem";
 
-import { isPortrait } from "../utils/utils";
-import { useCategories, useDeviceWidth } from "../store/redux/hooks";
+import { useCategories } from "../store/redux/hooksCategory";
 
 interface AddCategoryFormProps {
   category: MachineCategory;
@@ -24,26 +30,37 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
 
-  const { deviceWidth } = useCategories();
+  const [visibleTitleField, setVisibleTitleField] = useState(false);
+  const openMenuTitleField = () => setVisibleTitleField(true);
+  const closeMenuTitleField = () => setVisibleTitleField(false);
+
+  const { deviceWidth, fieldsNames } = useCategories();
   const dispatch = useDispatch();
 
-  const menuItemHandler = (value: string) => {
-    category.categoryFields = [
-      ...category.categoryFields,
-      { fieldId: uuid(), fieldName: "", fieldType: value },
-    ];
-    dispatch(updateCategory(category));
+  const menuItemHandler = useCallback((value: string) => {
+    const fields = {
+      categoryId: category.categoryId,
+      field: { fieldId: uuid(), fieldName: "", fieldType: value },
+    };
+
+    dispatch(updateCategoryFields(fields));
     closeMenu();
-  };
+  }, []);
 
-  const categoryNameTextInputHandler = (text: string) => {
-    category.categoryName = text;
+  const categoryNameTextInputHandler = useCallback((text: string) => {
+    dispatch(updateCategoryName({ ...category, categoryName: text }));
+  }, []);
 
-    dispatch(updateCategory(category));
-  };
-  const categoryRemoveHandler = () => {
+  const categoryRemoveHandler = useCallback(() => {
     dispatch(removeCategory(category));
-  };
+  }, []);
+
+  const fieldTitleHandler = useCallback((value: string) => {
+    dispatch(
+      updateFieldTitle({ categoryId: category.categoryId, fieldTitle: value })
+    );
+    closeMenuTitleField();
+  }, []);
   return (
     <View
       style={[
@@ -56,8 +73,9 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
         <Text style={styles.categoryNameText}>Category Name </Text>
         <TextInput
           style={styles.categoryNameTextBox}
-          value={category.categoryName}
           onChangeText={categoryNameTextInputHandler}
+          autoCorrect={false}
+          defaultValue={category.categoryName}
         />
       </View>
       <View>
@@ -71,14 +89,33 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
           ))}
       </View>
       <View style={styles.btnContainer}>
-        <Button
-          style={styles.btn}
-          buttonColor={COLORS.primary}
-          mode="contained"
-          onPress={() => console.log("Pressed")}
+        <Menu
+          theme={{
+            colors: {
+              background: "blue",
+            },
+          }}
+          visible={visibleTitleField}
+          onDismiss={closeMenuTitleField}
+          anchor={
+            <Button
+              style={styles.btn}
+              buttonColor={COLORS.primary}
+              mode="contained"
+              onPress={openMenuTitleField}
+            >
+              Title Field :{category.titleField}
+            </Button>
+          }
         >
-          Title Field :
-        </Button>
+          {fieldsNames(category).map((fieldName) => (
+            <MenuItem
+              key={fieldName.id}
+              type={fieldName.name}
+              onPress={fieldTitleHandler}
+            />
+          ))}
+        </Menu>
       </View>
 
       <View style={styles.btnsContainer}>
@@ -86,7 +123,7 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
           <Menu
             theme={{
               colors: {
-                background: "blue", // Change the background color here
+                background: "blue",
               },
             }}
             visible={visible}

@@ -8,7 +8,7 @@ export const isPortrait = () => {
 export const groupDataByCategory = (data: any) => {
   const groupedData: any = {};
 
-  data.forEach((item: any) => {
+  data?.forEach((item: any) => {
     if (!groupedData[item.categoryName]) {
       groupedData[item.categoryName] = [];
     }
@@ -16,4 +16,15 @@ export const groupDataByCategory = (data: any) => {
   });
 
   return groupedData;
+};
+
+export const debounce = (func: any) => {
+  let timer: any;
+  return (...args: any[]) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      func.apply(this, args);
+    }, 2000);
+  };
 };

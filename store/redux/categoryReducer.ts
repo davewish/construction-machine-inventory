@@ -1,17 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MachineCategory } from "../../models/Category";
+import { Field, MachineCategory } from "../../models/Category";
 import uuid from "uuid-random";
 import { Machine } from "../../models/Machine";
+import { acc } from "react-native-reanimated";
 
 interface IntialState {
   categories: MachineCategory[];
-  machines: Machine[];
+
   deviceWidth: number;
 }
 const initialState: IntialState = {
   categories: [],
-
-  machines: [],
   deviceWidth: 800,
 };
 
@@ -25,12 +24,56 @@ const categorySlice = createSlice({
     addCategory: (state, action: PayloadAction<MachineCategory>) => {
       state.categories.push(action.payload);
     },
-    updateCategory: (state, action: PayloadAction<MachineCategory>) => {
-      state.categories = state.categories.map((category) => {
-        return category.categoryId === action.payload.categoryId
-          ? { ...category, ...action.payload }
-          : category;
-      });
+    updateCategoryName: (state, action: PayloadAction<MachineCategory>) => {
+      const category: MachineCategory | undefined = state.categories.find(
+        (category) => category.categoryId === action.payload.categoryId
+      );
+
+      if (category) {
+        category.categoryName = action.payload.categoryName;
+      }
+    },
+    updateCategoryFields: (
+      state,
+      action: PayloadAction<{ categoryId: string; field: Field }>
+    ) => {
+      const category: MachineCategory | undefined = state.categories.find(
+        (category) => category.categoryId === action.payload.categoryId
+      );
+      const categoryIndex = state.categories.findIndex(
+        (category) => category.categoryId === action.payload.categoryId
+      );
+
+      if (category) {
+        const currentField = category.categoryFields.find(
+          (field) => field.fieldId === action.payload.field.fieldId
+        );
+        const fieldIndex = category.categoryFields.findIndex(
+          (field) => field.fieldId === action.payload.field.fieldId
+        );
+
+        if (currentField) {
+          currentField.fieldName = action.payload.field.fieldName;
+          currentField.fieldType = action.payload.field.fieldType;
+          state.categories[categoryIndex].categoryFields[fieldIndex] =
+            currentField;
+        } else {
+          category.categoryFields.push(action.payload.field);
+        }
+      }
+    },
+
+    updateFieldTitle: (
+      state,
+      action: PayloadAction<{ categoryId: string; fieldTitle: string }>
+    ) => {
+      const category: MachineCategory | undefined = state.categories.find(
+        (category) => category.categoryId === action.payload.categoryId
+      );
+
+      if (category) {
+        category.titleField = action.payload.fieldTitle;
+      }
     },
 
     removeCategory: (state, action: PayloadAction<MachineCategory>) => {
@@ -41,26 +84,29 @@ const categorySlice = createSlice({
 
       state.categories.splice(indexToBeRemoved, 1);
     },
-    addMachine: (state, action: PayloadAction<Machine>) => {
-      state.machines.push(action.payload);
-    },
-    updateMachine: (state, action: PayloadAction<Machine>) => {
-      state.machines = state.machines.map((machine) => {
-        return machine.machineId === action.payload.machineId
-          ? { ...machine, ...action.payload }
-          : machine;
-      });
-    },
-    removeMchine: (state, action: PayloadAction<Machine>) => {
-      const { machines } = state;
-      const indexToBeRemoved = machines.findIndex(
-        (machine) => machine.machineId == action.payload.machineId
+    removeFields: (
+      state,
+      action: PayloadAction<{ categoryId: string; fieldId: string }>
+    ) => {
+      const category: MachineCategory | undefined = state.categories.find(
+        (category) => category.categoryId === action.payload.categoryId
       );
 
-      state.machines.splice(indexToBeRemoved, 1);
+      if (category) {
+        const fieldIndex = category.categoryFields.findIndex(
+          (field) => field.fieldId === action.payload.fieldId
+        );
+        const currentField = category.categoryFields.find(
+          (field) => field.fieldId === action.payload.fieldId
+        );
+        if (category.titleField === currentField?.fieldName) {
+          category.titleField = "";
+        }
+        category.categoryFields.splice(fieldIndex, 1);
+      }
     },
+
     updateDeviceWidth: (state, action) => {
-      console.log("reducer", action.payload.width);
       state.deviceWidth = action.payload.width;
     },
   },
@@ -68,14 +114,12 @@ const categorySlice = createSlice({
 
 export const {
   addCategory,
-  updateCategory,
+  updateCategoryName,
   removeCategory,
-
-  setStateFromAsyncStorage,
-  addMachine,
-  updateMachine,
-  removeMchine,
+  updateCategoryFields,
   updateDeviceWidth,
+  updateFieldTitle,
+  removeFields,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

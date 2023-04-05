@@ -1,23 +1,24 @@
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import uuid from "uuid-random";
-import { useEffect, useState } from "react";
-import { Dimensions } from "react-native";
+import { groupDataByCategory } from "../../utils/utils";
+import { MachineCategory } from "../../models/Category";
 
 export const useCategories = () => {
   const machineCategories = useSelector(
-    (state: RootState) => state.persistRed.categories
+    (state: RootState) => state.persistRed.categories.categories
   );
 
   const categoryNames = machineCategories.map((category) => {
     return { id: category.categoryId, name: category.categoryName };
   });
-  const machines = useSelector((state: RootState) => state.persistRed.machines);
-  const selectedMachines = (categoryName: string) => {
-    return machines.filter((machine) => machine.categoryName === categoryName);
-  };
+  const fieldsNames = (category: MachineCategory) =>
+    category.categoryFields.map((field) => {
+      return { id: uuid(), name: field.fieldName };
+    }) || [];
+
   const deviceWidth = useSelector(
-    (state: RootState) => state.persistRed.deviceWidth
+    (state: RootState) => state.persistRed.categories.deviceWidth
   );
 
   return {
@@ -27,10 +28,7 @@ export const useCategories = () => {
       ...categoryNames,
       { id: uuid(), name: "ManagedCategory" },
     ],
-    selectedMachines,
-    machines,
     deviceWidth,
+    fieldsNames,
   };
 };
-
-

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useCallback, useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 import MachineForm from "../components/MachineForm";
-import { useCategories } from "../store/redux/hooks";
+import { useCategories } from "../store/redux/hooksCategory";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RouteProp } from "@react-navigation/native";
 import { InventoryParamList } from "../utils/type";
@@ -18,8 +18,10 @@ import { Machine } from "../models/Machine";
 
 import uuid from "uuid-random";
 import { useDispatch } from "react-redux";
-import { addMachine } from "../store/redux/categoryReducer";
+
 import { MachineCategory } from "../models/Category";
+import { useMachine } from "../store/redux/hooksMachine";
+import { addMachine } from "../store/redux/machineReducer";
 
 type MachineTypeDetailRouteProp = RouteProp<
   InventoryParamList,
@@ -41,12 +43,12 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
   navigation,
 }) => {
   const { categoryName } = route.params;
-  const { categories, machines } = useCategories();
+  const { categories } = useCategories();
+  const { selectedMachines } = useMachine();
 
   const dispatch = useDispatch();
 
-  const { selectedMachines } = useCategories();
-  const addNewItemHandler = () => {
+  const addNewItemHandler = useCallback(() => {
     const machine = new Machine(uuid(), categoryName);
     const currentCategory: MachineCategory | undefined = categories.find(
       (category: MachineCategory) => category.categoryName === categoryName
@@ -74,7 +76,8 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
     }
 
     dispatch(addMachine({ ...machine }));
-  };
+  }, [categoryName]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: categoryName,
@@ -97,6 +100,7 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
       ),
     });
   }, [categoryName]);
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
