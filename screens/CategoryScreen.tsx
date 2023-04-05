@@ -62,7 +62,7 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
         </View>
       );
     },
-    [machines, groupedData]
+    [groupedData]
   );
 
   if (Object.keys(groupedData).length === 0) {

@@ -27,12 +27,16 @@ interface AddCategoryFormProps {
 
 const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
   const [visible, setVisible] = useState(false);
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
-
   const [visibleTitleField, setVisibleTitleField] = useState(false);
-  const openMenuTitleField = () => setVisibleTitleField(true);
-  const closeMenuTitleField = () => setVisibleTitleField(false);
+
+  const openMenu = useCallback(() => setVisible(true), []);
+  const closeMenu = useCallback(() => setVisible(false), []);
+
+  const openMenuTitleField = useCallback(() => setVisibleTitleField(true), []);
+  const closeMenuTitleField = useCallback(
+    () => setVisibleTitleField(false),
+    []
+  );
 
   const { deviceWidth, fieldsNames } = useCategories();
   const dispatch = useDispatch();

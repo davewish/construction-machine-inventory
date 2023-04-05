@@ -47,10 +47,10 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
 
   const dispatch = useDispatch();
 
-  const onLayout = useCallback(() => {
+  const onLayout = () => {
     const { width } = Dimensions.get("window");
     dispatch(updateDeviceWidth({ width }));
-  }, []);
+  };
 
   useEffect(() => {
     Dimensions.addEventListener("change", onLayout);
@@ -64,6 +64,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
         categoryId: category.categoryId,
         categoryName: category.categoryName,
         categoryFields: category.categoryFields,
+        titleField: "",
       })
     );
   }, []);
@@ -71,7 +72,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
     return <AddCategoryForm category={itemData.item} />;
   }, []);
 
-  const displayContent = useCallback(() => {
+  const displayContent = () => {
     return categories.length === 0 ? (
       <>
         <NotFound />
@@ -93,7 +94,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
         keyExtractor={(item) => item.categoryId}
       />
     );
-  }, [categories]);
+  };
 
   return (
     <KeyboardAvoidingView
