@@ -40,7 +40,7 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
 
   const { deviceWidth, fieldsNames, categories } = useCategories();
   const dispatch = useDispatch();
-  console.log("categroies recent ", JSON.stringify(categories));
+
   const menuItemHandler = useCallback((value: string) => {
     const fields = {
       categoryId: category.categoryId,

@@ -23,7 +23,7 @@ const persistConfig = {
 const persistRed = persistReducer(persistConfig, rootReducers);
 export const store = configureStore({
   reducer: { persistRed },
-  middleware: [thunk],
+  middleware: [thunk, logger],
 });
 
 export const persistor = persistStore(store);

@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import { groupDataByCategory } from "../../utils/utils";
-import { useCallback } from "react";
+
 
 export const useMachine = () => {
   const machines =

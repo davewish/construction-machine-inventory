@@ -14,7 +14,7 @@ import { RouteProp } from "@react-navigation/native";
 import { InventoryParamList } from "../utils/type";
 import { COLORS } from "../utils/colors";
 import { Button } from "react-native-paper";
-import { Machine } from "../models/Machine";
+import { Machine, MachineField } from "../models/Machine";
 
 import uuid from "uuid-random";
 import { useDispatch } from "react-redux";
@@ -42,21 +42,22 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
   route,
   navigation,
 }) => {
-  const { categoryName } = route.params;
+  const { id: categoryId, name: categoryName } = route.params.category;
   const { categories } = useCategories();
   const { selectedMachines } = useMachine();
 
   const dispatch = useDispatch();
 
-  const addNewItemHandler = () => {
+  const addNewItemHandler = useCallback(() => {
     const machine = new Machine(uuid(), categoryName);
 
     const currentCategory: MachineCategory | undefined = categories.find(
-      (category: MachineCategory) => category.categoryName === categoryName
+      (category: MachineCategory) => category.categoryId === categoryId
     );
-    console.log("current", currentCategory);
+
+    let fields: MachineField[] = [];
     if (currentCategory) {
-      machine.fields = currentCategory.categoryFields.map((category) => {
+      fields = currentCategory.categoryFields.map((category) => {
         let defaultValue: number | string | Date | boolean;
         const type = category.fieldType.toLowerCase();
         if (type === "number") {
@@ -76,9 +77,8 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
         };
       });
     }
-
-    dispatch(addMachine({ ...machine }));
-  };
+    dispatch(addMachine({ ...machine, fields }));
+  }, [categories]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -101,7 +101,7 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
         </Button>
       ),
     });
-  }, [categoryName]);
+  }, [categoryName, categories]);
 
   return (
     <KeyboardAvoidingView

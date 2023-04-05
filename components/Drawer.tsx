@@ -14,7 +14,7 @@ const CustomeDrawer = ({ navigation }: { navigation: any }) => {
         navigation.navigate(item.name);
       } else {
         navigation.navigate("MachineTypeDetail", {
-          categoryName: item.name,
+          category: item,
         });
       }
     },

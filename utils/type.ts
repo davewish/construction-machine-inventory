@@ -5,6 +5,6 @@ export type InventoryParamList = {
   Category: undefined;
   ManagedCategory: undefined;
   MachineTypeDetail: {
-    categoryName: string;
+    category: { id: string; name: string };
   };
 };

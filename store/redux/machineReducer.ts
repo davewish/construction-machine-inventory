@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Field, MachineCategory } from "../../models/Category";
-import uuid from "uuid-random";
 import { Machine, MachineField } from "../../models/Machine";
 
 interface IntialState {
@@ -35,9 +33,10 @@ const machineSlice = createSlice({
         const fieldIndex = machine.fields.findIndex(
           (field) => field.fieldId === action.payload.field.fieldId
         );
-        console.log(currentField);
+
         if (currentField) {
           currentField.fieldValue = action.payload.field.fieldValue;
+          currentField.fieldType = action.payload.field.fieldType;
           state.machines[machineIndex].fields[fieldIndex] = currentField;
         } else {
           machine.fields.push(action.payload.field);
