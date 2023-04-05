@@ -7,9 +7,12 @@ import thunk from "redux-thunk";
 
 import categoryReducer from "./categoryReducer";
 import machineReducer from "./machineReducer";
+import settingReducer from "./settingReducer";
+
 const rootReducers = combineReducers({
   categories: categoryReducer,
   machines: machineReducer,
+  settings: settingReducer,
 });
 
 const persistConfig = {

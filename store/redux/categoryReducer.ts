@@ -6,12 +6,9 @@ import { acc } from "react-native-reanimated";
 
 interface IntialState {
   categories: MachineCategory[];
-
-  deviceWidth: number;
 }
 const initialState: IntialState = {
   categories: [],
-  deviceWidth: 800,
 };
 
 const categorySlice = createSlice({
@@ -105,10 +102,6 @@ const categorySlice = createSlice({
         category.categoryFields.splice(fieldIndex, 1);
       }
     },
-
-    updateDeviceWidth: (state, action) => {
-      state.deviceWidth = action.payload.width;
-    },
   },
 });
 
@@ -117,7 +110,7 @@ export const {
   updateCategoryName,
   removeCategory,
   updateCategoryFields,
-  updateDeviceWidth,
+
   updateFieldTitle,
   removeFields,
 } = categorySlice.actions;

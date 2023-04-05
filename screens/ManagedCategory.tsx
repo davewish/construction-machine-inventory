@@ -15,7 +15,7 @@ import { MachineCategory } from "../models/Category";
 
 import uuid from "uuid-random";
 import { useDispatch } from "react-redux";
-import { addCategory, updateDeviceWidth } from "../store/redux/categoryReducer";
+import { addCategory } from "../store/redux/categoryReducer";
 import AddCategoryForm from "./AddCategoryForm";
 import { COLORS } from "../utils/colors";
 import { useCategories } from "../store/redux/hooksCategory";
@@ -23,6 +23,7 @@ import { useCategories } from "../store/redux/hooksCategory";
 import { InventoryParamList } from "../utils/type";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RouteProp } from "@react-navigation/native";
+import { updateDeviceWidth } from "../store/redux/settingReducer";
 
 type ManagedCategoryRouteProp = RouteProp<
   InventoryParamList,
@@ -49,12 +50,11 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
 
   const onLayout = () => {
     const { width } = Dimensions.get("window");
-    dispatch(updateDeviceWidth({ width }));
+    dispatch(updateDeviceWidth(width));
   };
 
   useEffect(() => {
     Dimensions.addEventListener("change", onLayout);
-    return () => {};
   }, [deviceWidth]);
 
   const addNewCategoryForm = useCallback(() => {
@@ -72,7 +72,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
     return <AddCategoryForm category={itemData.item} />;
   }, []);
 
-  const displayContent = () => {
+  const displayContent = useMemo(() => {
     return categories.length === 0 ? (
       <>
         <NotFound />
@@ -94,7 +94,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
         keyExtractor={(item) => item.categoryId}
       />
     );
-  };
+  }, [categories, deviceWidth]);
 
   return (
     <KeyboardAvoidingView
@@ -102,7 +102,7 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
       behavior={Platform.OS !== "ios" ? "height" : "padding"}
     >
       <View style={styles.rootScreen} onLayout={onLayout}>
-        <View style={styles.flatListContainer}>{displayContent()}</View>
+        <View style={styles.flatListContainer}>{displayContent}</View>
         <View style={styles.addBtnContainer}>
           <Button
             buttonColor={COLORS.primary}

@@ -18,7 +18,7 @@ export const useCategories = () => {
     }) || [];
 
   const deviceWidth = useSelector(
-    (state: RootState) => state.persistRed.categories.deviceWidth
+    (state: RootState) => state.persistRed.settings.deviceWidth
   );
 
   return {
