@@ -19,7 +19,7 @@ import NotFound from "../components/NoFound";
 import { COLORS } from "../utils/colors";
 import { InventoryParamList } from "../utils/type";
 
-import uuid from "uuid-random";
+
 import { useMachine } from "../store/redux/hooksMachine";
 
 type CategoryRouteProp = RouteProp<InventoryParamList, "Category">;

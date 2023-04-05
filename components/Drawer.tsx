@@ -5,21 +5,21 @@ import { useCategories } from "../store/redux/hooksCategory";
 const CustomeDrawer = ({ navigation }: { navigation: any }) => {
   const { categoryNames, categories } = useCategories();
 
-  const handleDrawerNavigation = useCallback(
-    (item: { id: string; name: string }) => {
-      if (
-        item.name === categoryNames[0].name ||
-        item.name === categoryNames[categoryNames.length - 1].name
-      ) {
-        navigation.navigate(item.name);
-      } else {
-        navigation.navigate("MachineTypeDetail", {
-          category: item,
-        });
-      }
-    },
-    [categories]
-  );
+  const handleDrawerNavigation = (item: { id: string; name: string }) => {
+    if (
+      item.name === categoryNames[0].name ||
+      item.name === categoryNames[categoryNames.length - 1].name
+    ) {
+      navigation.navigate(item.name);
+    } else {
+      navigation.navigate("MachineTypeDetail", {
+        category: item,
+      });
+    }
+  };
+    
+   
+  
   return (
     <View style={styles.container}>
       {categoryNames.map((item) => (
