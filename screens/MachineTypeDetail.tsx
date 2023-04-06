@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect } from "react";
+import React, { useCallback, useLayoutEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -22,6 +22,8 @@ import { useDispatch } from "react-redux";
 import { MachineCategory } from "../models/Category";
 import { useMachine } from "../store/redux/hooksMachine";
 import { addMachine } from "../store/redux/machineReducer";
+import FieldItem from "../components/FieldItem";
+import { getBehavior } from "../utils/utils";
 
 type MachineTypeDetailRouteProp = RouteProp<
   InventoryParamList,
@@ -43,13 +45,13 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
   navigation,
 }) => {
   const { id: categoryId, name: categoryName } = route.params.category;
-  const { categories } = useCategories();
+  const { categories, getFieldTitle } = useCategories();
   const { selectedMachines } = useMachine();
 
   const dispatch = useDispatch();
 
   const addNewItemHandler = useCallback(() => {
-    const machine = new Machine(uuid(), categoryName);
+    const machine = new Machine(uuid(), categoryName, categoryId);
 
     const currentCategory: MachineCategory | undefined = categories.find(
       (category: MachineCategory) => category.categoryId === categoryId
@@ -80,6 +82,13 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
     dispatch(addMachine({ ...machine, fields }));
   }, [categories, categoryId, categoryName, dispatch, addMachine]);
 
+  const isAddNewButtonDIsbaled = useMemo(
+    () =>
+      categories.find((category) => category.categoryName === categoryName)
+        ?.categoryFields.length === 0,
+    [categories]
+  );
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: categoryName,
@@ -91,11 +100,7 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
           buttonColor={COLORS.primary}
           mode="contained"
           onPress={addNewItemHandler}
-          disabled={
-            categories.find(
-              (category) => category.categoryName === categoryName
-            )?.categoryFields.length === 0
-          }
+          disabled={isAddNewButtonDIsbaled}
         >
           Add New Item
         </Button>
@@ -103,23 +108,29 @@ const MachineTypeDetail: React.FC<MachineTypeDetailprops> = ({
     });
   }, [categoryName, categories, categoryId, addNewItemHandler]);
 
+  const renderMachineForm = useCallback(
+    (itemData: { item: Machine }) => {
+      return <MachineForm machine={itemData.item} />;
+    },
+    [selectedMachines]
+  );
+
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS !== "ios" ? "height" : "padding"}
-    >
+    <KeyboardAvoidingView style={styles.rootScreen} behavior={getBehavior()}>
       <View style={styles.rootScreen}>
         <FlatList
-          contentContainerStyle={{ paddingHorizontal: 12 }}
+          contentContainerStyle={styles.containerStyle}
           data={selectedMachines(categoryName)}
-          keyExtractor={(item) => item.machineId}
+          keyExtractor={getKey}
           numColumns={2}
-          renderItem={(item) => <MachineForm machine={item.item} />}
+          renderItem={renderMachineForm}
         />
       </View>
     </KeyboardAvoidingView>
   );
 };
+const getKey = (item: Machine) => item?.machineId;
+
 export default MachineTypeDetail;
 const styles = StyleSheet.create({
   rootScreen: {
@@ -127,5 +138,8 @@ const styles = StyleSheet.create({
   },
   btn: {
     marginHorizontal: 10,
+  },
+  containerStyle: {
+    paddingHorizontal: 12,
   },
 });

@@ -9,7 +9,6 @@ import { useCategories } from "../store/redux/hooksCategory";
 import { useDispatch } from "react-redux";
 import {
   removeFields,
-  updateCategory,
   updateCategoryFields,
 } from "../store/redux/categoryReducer";
 import { FIELD_TYPES } from "../utils/fieldType";
@@ -17,6 +16,10 @@ import MenuItem from "./MenuItem";
 interface FieldItemProps {
   field: Field;
   categoryId: string;
+}
+interface UpdateFields {
+  filteredField: Field | undefined;
+  fieldNames: string[] | undefined;
 }
 const FieldItem = ({ field, categoryId }: FieldItemProps) => {
   const [visible, setVisible] = useState(false);
@@ -28,27 +31,26 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
 
   const dispatch = useDispatch();
 
-  const updateFields = useCallback(() => {
+  const updateFields = useCallback((): UpdateFields => {
     const category = categories.find(
       (category) => category.categoryId === categoryId
     );
+    let filteredField;
+    let fieldNames;
     if (category) {
-      const filteredField = category?.categoryFields.find(
+      filteredField = category?.categoryFields.find(
         (currentField) => currentField.fieldId == field.fieldId
       );
-      const fieldNames = category.categoryFields.map(
-        (field) => field.fieldName
-      );
-
-      return { filteredField, fieldNames };
+      fieldNames = category.categoryFields.map((field) => field.fieldName);
     }
+    return { filteredField, fieldNames };
   }, [categories, categoryId]);
 
   const textInputHandler = useCallback(
     (text: string) => {
       const { filteredField, fieldNames } = updateFields();
 
-      if (filteredField && fieldNames.indexOf(text) < 0) {
+      if (filteredField && fieldNames && fieldNames?.indexOf(text) < 0) {
         dispatch(
           updateCategoryFields({
             categoryId,
@@ -131,7 +133,9 @@ const FieldItem = ({ field, categoryId }: FieldItemProps) => {
         style={styles.btn}
         mode="contained"
         onPress={handleRemoveField}
-      />
+      >
+        {" "}
+      </Button>
     </View>
   );
 };

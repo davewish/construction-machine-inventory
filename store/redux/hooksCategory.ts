@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "./store";
 import uuid from "uuid-random";
-import { groupDataByCategory } from "../../utils/utils";
+
 import { MachineCategory } from "../../models/Category";
 import { useCallback, useMemo } from "react";
 
@@ -22,6 +22,14 @@ export const useCategories = () => {
   const deviceWidth = useSelector(
     (state: RootState) => state.persistRed.settings.deviceWidth
   );
+  const getFieldTitle = useCallback(
+    (categoryId: string) => {
+      return machineCategories.find(
+        (machineCategory) => machineCategory.categoryId === categoryId
+      )?.titleField;
+    },
+    [machineCategories]
+  );
 
   return {
     categories: machineCategories,
@@ -32,5 +40,6 @@ export const useCategories = () => {
     ],
     deviceWidth,
     fieldsNames,
+    getFieldTitle,
   };
 };

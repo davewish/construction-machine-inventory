@@ -30,6 +30,7 @@ import { InventoryParamList } from "../utils/type";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { RouteProp } from "@react-navigation/native";
 import { updateDeviceWidth } from "../store/redux/settingReducer";
+import { getBehavior } from "../utils/utils";
 
 type ManagedCategoryRouteProp = RouteProp<
   InventoryParamList,
@@ -74,9 +75,13 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
       })
     );
   }, [dispatch, addCategory]);
-  const renderCategoryForm = useCallback((itemData: any) => {
-    return <AddCategoryForm category={itemData.item} />;
-  }, []);
+
+  const renderCategoryForm = useCallback(
+    (itemData: { item: MachineCategory }) => {
+      return <AddCategoryForm category={itemData.item} />;
+    },
+    [categories]
+  );
 
   const displayContent = useMemo(() => {
     return categories.length === 0 ? (
@@ -86,27 +91,24 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
     ) : deviceWidth < 500 ? (
       <FlatList
         data={categories}
-        contentContainerStyle={{ paddingHorizontal: 20 }}
+        contentContainerStyle={styles.flatListContentStyle}
         renderItem={renderCategoryForm}
         numColumns={1}
-        keyExtractor={(item) => item.categoryId}
+        keyExtractor={getKey}
       />
     ) : (
       <FlatList
         data={categories}
-        contentContainerStyle={{ padding: 20 }}
+        contentContainerStyle={styles.flatListContentStyle}
         renderItem={renderCategoryForm}
         numColumns={2}
-        keyExtractor={(item) => item.categoryId}
+        keyExtractor={getKey}
       />
     );
   }, [categories, deviceWidth]);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS !== "ios" ? "height" : "padding"}
-    >
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={getBehavior()}>
       <View style={styles.rootScreen} onLayout={onLayout}>
         <View style={styles.flatListContainer}>{displayContent}</View>
         <View style={styles.addBtnContainer}>
@@ -125,6 +127,9 @@ const ManagedCategory: React.FC<ManagedCategoryprops> = ({
 };
 
 export default ManagedCategory;
+
+const getKey = (item: MachineCategory) => item.categoryId;
+
 const styles = StyleSheet.create({
   rootScreen: {
     flex: 1,
@@ -138,5 +143,8 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderRadius: 8,
+  },
+  flatListContentStyle: {
+    paddingHorizontal: 10,
   },
 });

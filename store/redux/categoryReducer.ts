@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Field, MachineCategory } from "../../models/Category";
-import uuid from "uuid-random";
-import { Machine } from "../../models/Machine";
-import { acc } from "react-native-reanimated";
+
 
 interface IntialState {
   categories: MachineCategory[];

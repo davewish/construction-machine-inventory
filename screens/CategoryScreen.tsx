@@ -21,6 +21,9 @@ import { InventoryParamList } from "../utils/type";
 
 
 import { useMachine } from "../store/redux/hooksMachine";
+import { useCategories } from "../store/redux/hooksCategory";
+import { getBehavior } from "../utils/utils";
+import { Machine } from "../models/Machine";
 
 type CategoryRouteProp = RouteProp<InventoryParamList, "Category">;
 
@@ -40,8 +43,9 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
   const addNewCategoryHandler = useCallback(() => {
     navigation.navigate("ManagedCategory");
   }, []);
+
   const renderMachineForm = useCallback(
-    (itemData) => {
+    (itemData: { item: Machine }) => {
       return <MachineForm machine={itemData.item} />;
     },
     [machines]
@@ -53,9 +57,9 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
         <View>
           <Text style={styles.textHeader}> {item}</Text>
           <FlatList
-            contentContainerStyle={{ padding: 4 }}
+            contentContainerStyle={styles.flatListContentStyle}
             data={groupedData[item]}
-            keyExtractor={(item) => item.machineId}
+            keyExtractor={getkey}
             numColumns={2}
             renderItem={renderMachineForm}
           />
@@ -68,8 +72,8 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
   if (Object.keys(groupedData).length === 0) {
     return (
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS !== "ios" ? "height" : "padding"}
+        style={styles.keyboardView}
+        behavior={getBehavior()}
       >
         <View style={styles.rootScreen}>
           <NotFound />
@@ -91,9 +95,9 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
     <View style={styles.rootScreen}>
       {groupedData && (
         <FlatList
-          contentContainerStyle={{ padding: 4 }}
+          contentContainerStyle={styles.flatListContentStyle}
           data={Object.keys(groupedData)}
-          keyExtractor={(item, index) => item}
+          keyExtractor={getkey}
           renderItem={renderItem}
         />
       )}
@@ -103,7 +107,12 @@ const CategoryScreen: React.FC<Categoryprops> = ({ navigation, route }) => {
 
 export default CategoryScreen;
 
+const getkey = (item: any) => (item?.machineId ? item?.machineId : item);
+
 const styles = StyleSheet.create({
+  keyboardView: {
+    flex: 1,
+  },
   rootScreen: {
     flex: 1,
     paddingHorizontal: 20,
@@ -118,5 +127,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 4,
     marginBottom: 10,
+  },
+  flatListContentStyle: {
+    padding: 4,
   },
 });

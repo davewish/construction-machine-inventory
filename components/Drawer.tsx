@@ -1,9 +1,9 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useCategories } from "../store/redux/hooksCategory";
 
 const CustomeDrawer = ({ navigation }: { navigation: any }) => {
-  const { categoryNames, categories } = useCategories();
+  const { categoryNames } = useCategories();
 
   const handleDrawerNavigation = useCallback(
     (item: { id: string; name: string }) => {
@@ -20,12 +20,10 @@ const CustomeDrawer = ({ navigation }: { navigation: any }) => {
     },
     [navigation, categoryNames]
   );
-    
-   
-  
-  return (
-    <View style={styles.container}>
-      {categoryNames.map((item) => (
+
+  const renderPressableItem = useMemo(
+    () =>
+      categoryNames.map((item) => (
         <Pressable
           key={item.id}
           style={[styles.item]}
@@ -33,10 +31,14 @@ const CustomeDrawer = ({ navigation }: { navigation: any }) => {
         >
           <Text style={styles.name}>{item.name}</Text>
         </Pressable>
-      ))}
-    </View>
+      )),
+    [categoryNames, handleDrawerNavigation]
   );
+
+  return <View style={styles.container}>{renderPressableItem}</View>;
 };
+
+export default CustomeDrawer;
 
 const styles = StyleSheet.create({
   container: {
@@ -66,5 +68,3 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
-
-export default CustomeDrawer;

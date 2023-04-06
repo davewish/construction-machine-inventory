@@ -1,4 +1,4 @@
-import { Dimensions } from "react-native";
+import { Dimensions, Platform } from "react-native";
 
 export const isPortrait = () => {
   const dim = Dimensions.get("screen");
@@ -18,4 +18,4 @@ export const groupDataByCategory = (data: any) => {
   return groupedData;
 };
 
-
+export const getBehavior = () => (Platform.OS !== "ios" ? "height" : "padding");

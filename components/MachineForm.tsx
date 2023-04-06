@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Checkbox, TextInput, Text } from "react-native-paper";
 
@@ -8,43 +8,61 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { Machine, MachineField } from "../models/Machine";
 import { useDispatch } from "react-redux";
 import { removeMchine, updateMachine } from "../store/redux/machineReducer";
+import { useCategories } from "../store/redux/hooksCategory";
 
 interface MachineFormProps {
   machine: Machine;
 }
+
 const MachineForm = ({ machine }: MachineFormProps) => {
   const dispatch = useDispatch();
+  const { getFieldTitle } = useCategories();
 
-  const updateValue = (
-    value: string | number | Date | boolean,
-    fieldId: string
-  ) => {
-    const currentField = machine.fields.find(
-      (field) => field.fieldId === fieldId
-    );
+  const fieldTitle = useMemo(
+    () => getFieldTitle(machine.categoryId),
+    [machine, machine.categoryId, getFieldTitle]
+  );
 
-    if (currentField) {
-      dispatch(
-        updateMachine({
-          machineId: machine.machineId,
-          field: { ...currentField, fieldValue: value },
-        })
+  const updateValue = useCallback(
+    (value: string | number | Date | boolean, fieldId: string) => {
+      const currentField = machine.fields.find(
+        (field) => field.fieldId === fieldId
       );
-    }
-  };
-  const changeDateHandler = useCallback((selectedDate: any, id: string) => {
-    updateValue(new Date(selectedDate.nativeEvent.timestamp), id);
-  }, []);
 
-  const changeInputHandler = useCallback((value: string, id: string) => {
-    updateValue(value, id);
-  }, []);
+      if (currentField) {
+        dispatch(
+          updateMachine({
+            machineId: machine.machineId,
+            field: { ...currentField, fieldValue: value },
+          })
+        );
+      }
+    },
+    [machine, dispatch, updateMachine]
+  );
+  const changeDateHandler = useCallback(
+    (selectedDate: any, id: string) => {
+      updateValue(new Date(selectedDate.nativeEvent.timestamp), id);
+    },
+    [updateValue]
+  );
+
+  const changeInputHandler = useCallback(
+    (value: string, id: string) => {
+      updateValue(value, id);
+    },
+    [updateValue]
+  );
   const removeMachineHandler = useCallback(() => {
     dispatch(removeMchine(machine));
-  }, []);
-  const checkboxHandler = useCallback((value: boolean, id: string) => {
-    updateValue(!value, id);
-  }, []);
+  }, [dispatch, removeMchine]);
+
+  const checkboxHandler = useCallback(
+    (value: boolean, id: string) => {
+      updateValue(!value, id);
+    },
+    [updateValue]
+  );
 
   const renderInputType = useCallback(
     (field: MachineField): JSX.Element => {
@@ -106,7 +124,7 @@ const MachineForm = ({ machine }: MachineFormProps) => {
                 label={field.fieldName}
                 mode="outlined"
                 style={[styles.categoryNameTextBox, { flex: 1 }]}
-                value={new Date(field.fieldValue).toDateString()}
+                value={new Date(field.fieldValue as Date).toDateString()}
                 underlineColor={"transparent"}
                 onFocus={showMode}
               />
@@ -118,12 +136,14 @@ const MachineForm = ({ machine }: MachineFormProps) => {
     },
     [machine]
   );
-  // if (machine && machine.fields.length < 1) {
-  //   return <></>;
-  // }
 
   return (
     <View key={machine.machineId} style={styles.rootScreen}>
+      <View style={styles.fieldTitleCotainer}>
+        <Text
+          style={styles.fieldTitleText}
+        >{`Field Title: ${fieldTitle}`}</Text>
+      </View>
       {machine &&
         machine.fields &&
         machine.fields.map((field) => {
@@ -142,7 +162,9 @@ const MachineForm = ({ machine }: MachineFormProps) => {
             style={styles.btn}
             mode="contained"
             onPress={removeMachineHandler}
-          />
+          >
+            {""}
+          </Button>
         </View>
       )}
     </View>
@@ -193,5 +215,18 @@ const styles = StyleSheet.create({
   btnContainer: {
     margin: 10,
     alignItems: "flex-end",
+  },
+  fieldTitleCotainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+    padding: 4,
+  },
+  fieldTitleText: {
+    fontSize: 16,
+    textTransform: "capitalize",
+    color: "#000",
+    fontWeight: "bold",
   },
 });

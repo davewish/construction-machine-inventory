@@ -29,16 +29,19 @@ const AddCategoryForm = ({ category }: AddCategoryFormProps) => {
   const [visible, setVisible] = useState(false);
   const [visibleTitleField, setVisibleTitleField] = useState(false);
 
-  const openMenu = useCallback(() => setVisible(true), []);
-  const closeMenu = useCallback(() => setVisible(false), []);
+  const openMenu = useCallback(() => setVisible(true), [visible, setVisible]);
+  const closeMenu = useCallback(() => setVisible(false), [visible, setVisible]);
 
-  const openMenuTitleField = useCallback(() => setVisibleTitleField(true), []);
+  const openMenuTitleField = useCallback(
+    () => setVisibleTitleField(true),
+    [visibleTitleField, setVisibleTitleField]
+  );
   const closeMenuTitleField = useCallback(
     () => setVisibleTitleField(false),
-    []
+    [visibleTitleField, setVisibleTitleField]
   );
 
-  const { deviceWidth, fieldsNames, categories } = useCategories();
+  const { deviceWidth, fieldsNames } = useCategories();
   const dispatch = useDispatch();
 
   const menuItemHandler = useCallback(
